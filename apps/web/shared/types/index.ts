@@ -6,15 +6,24 @@ export interface User {
   role: "admin" | "member";
 }
 
+export interface Subtask {
+  id: string;
+  title: string;
+  done: boolean;
+}
+
 export interface Task {
   id: string;
   title: string;
   description?: string;
+  notes?: string;
   status: "todo" | "in_progress" | "done" | "cancelled";
   priority: "low" | "medium" | "high" | "urgent";
   assignee?: User;
   dueDate?: string;
   tags: string[];
+  subtasks?: Subtask[];
+  saved?: boolean;
   createdAt: string;
   updatedAt: string;
 }

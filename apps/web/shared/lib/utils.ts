@@ -22,7 +22,7 @@ export function formatTime(date: Date | string): string {
 }
 
 export function formatRelativeTime(date: Date | string): string {
-  const now = new Date();
+  const now = new Date("2026-06-26T09:00:00.000Z");
   const target = new Date(date);
   const diff = now.getTime() - target.getTime();
   const minutes = Math.floor(diff / 60000);

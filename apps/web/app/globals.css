@@ -2,18 +2,18 @@
 
 @theme {
   /* Colors - Premium Dark Theme */
-  --color-background: #09090b;
+  --color-background: #050617;
   --color-foreground: #fafafa;
-  --color-card: #0a0a0f;
+  --color-card: rgba(10, 14, 42, 0.56);
   --color-card-foreground: #fafafa;
   --color-popover: #0a0a0f;
   --color-popover-foreground: #fafafa;
-  --color-primary: #6366f1;
+  --color-primary: #7c5cff;
   --color-primary-foreground: #ffffff;
-  --color-secondary: #1e1e2e;
+  --color-secondary: rgba(52, 45, 112, 0.42);
   --color-secondary-foreground: #a1a1aa;
-  --color-muted: #18181b;
-  --color-muted-foreground: #71717a;
+  --color-muted: rgba(28, 32, 72, 0.58);
+  --color-muted-foreground: #9aa1bd;
   --color-accent: #6366f1;
   --color-accent-foreground: #ffffff;
   --color-destructive: #ef4444;
@@ -21,15 +21,15 @@
   --color-success: #22c55e;
   --color-warning: #f59e0b;
   --color-info: #3b82f6;
-  --color-border: #27272a;
-  --color-input: #27272a;
+  --color-border: rgba(164, 178, 255, 0.18);
+  --color-input: rgba(164, 178, 255, 0.18);
   --color-ring: #6366f1;
-  --color-sidebar: #0a0a0f;
+  --color-sidebar: rgba(12, 18, 52, 0.68);
   --color-sidebar-foreground: #a1a1aa;
   --color-sidebar-border: #1e1e2e;
-  --color-glass: rgba(255, 255, 255, 0.03);
-  --color-glass-border: rgba(255, 255, 255, 0.06);
-  --color-glass-hover: rgba(255, 255, 255, 0.06);
+  --color-glass: rgba(13, 18, 54, 0.52);
+  --color-glass-border: rgba(171, 184, 255, 0.22);
+  --color-glass-hover: rgba(124, 92, 255, 0.18);
   --color-surface-raised: #111116;
   --color-surface-overlay: rgba(0, 0, 0, 0.8);
 
@@ -47,11 +47,11 @@
   --radius-full: 9999px;
 
   /* Shadows */
-  --shadow-glow: 0 0 20px rgba(99, 102, 241, 0.15);
-  --shadow-glow-lg: 0 0 40px rgba(99, 102, 241, 0.2);
-  --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.3), 0 1px 2px rgba(0, 0, 0, 0.4);
-  --shadow-card-hover: 0 4px 12px rgba(0, 0, 0, 0.4), 0 2px 4px rgba(0, 0, 0, 0.3);
-  --shadow-floating: 0 8px 30px rgba(0, 0, 0, 0.5), 0 0 1px rgba(255, 255, 255, 0.1);
+  --shadow-glow: 0 0 26px rgba(124, 92, 255, 0.42), 0 0 70px rgba(34, 211, 238, 0.12);
+  --shadow-glow-lg: 0 0 50px rgba(124, 92, 255, 0.48), 0 0 120px rgba(37, 99, 235, 0.20);
+  --shadow-card: 0 22px 70px rgba(0, 0, 0, 0.36), 0 0 34px rgba(74, 85, 255, 0.10), inset 0 1px 0 rgba(255, 255, 255, 0.14);
+  --shadow-card-hover: 0 24px 80px rgba(0, 0, 0, 0.34), inset 0 1px 0 rgba(255, 255, 255, 0.16);
+  --shadow-floating: 0 28px 90px rgba(0, 0, 0, 0.46), 0 0 80px rgba(124, 92, 255, 0.20), inset 0 1px 0 rgba(255, 255, 255, 0.18), 0 0 1px rgba(255, 255, 255, 0.24);
 
   /* Animations */
   --ease-spring: cubic-bezier(0.22, 1, 0.36, 1);
@@ -70,7 +70,7 @@
 [data-theme="light"] {
   --color-background: #fafafa;
   --color-foreground: #09090b;
-  --color-card: #ffffff;
+  --color-card: rgba(255, 255, 255, 0.26);
   --color-card-foreground: #09090b;
   --color-popover: #ffffff;
   --color-popover-foreground: #09090b;
@@ -80,12 +80,12 @@
   --color-muted-foreground: #71717a;
   --color-border: #e4e4e7;
   --color-input: #e4e4e7;
-  --color-sidebar: #ffffff;
+  --color-sidebar: rgba(255, 255, 255, 0.28);
   --color-sidebar-foreground: #3f3f46;
   --color-sidebar-border: #e4e4e7;
-  --color-glass: rgba(0, 0, 0, 0.02);
-  --color-glass-border: rgba(0, 0, 0, 0.06);
-  --color-glass-hover: rgba(0, 0, 0, 0.04);
+  --color-glass: rgba(255, 255, 255, 0.24);
+  --color-glass-border: rgba(255, 255, 255, 0.62);
+  --color-glass-hover: rgba(255, 255, 255, 0.34);
   --color-surface-raised: #ffffff;
   --color-surface-overlay: rgba(255, 255, 255, 0.8);
 }
@@ -99,6 +99,12 @@ html {
   scroll-behavior: smooth;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+html,
+body {
+  max-width: 100%;
+  overflow-x: hidden;
 }
 
 body {
@@ -150,16 +156,298 @@ body {
   background: var(--color-glass-hover);
 }
 
-/* Gradient text */
-.gradient-text {
-  background: linear-gradient(135deg, #6366f1, #8b5cf6, #a78bfa);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+
+
+/* Floating transparent liquid navigation */
+@layer components {
+  .floating-liquid-nav {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    background:
+      linear-gradient(135deg, rgba(255, 255, 255, 0.10), rgba(255, 255, 255, 0.02)),
+      radial-gradient(circle at 12% 0%, rgba(99, 102, 241, 0.08), transparent 34%),
+      radial-gradient(circle at 85% 100%, rgba(34, 211, 238, 0.08), transparent 36%),
+      rgba(9, 9, 15, 0.06);
+    box-shadow:
+      0 24px 70px rgba(0, 0, 0, 0.22),
+      0 10px 30px rgba(99, 102, 241, 0.10),
+      inset 0 1px 0 rgba(255, 255, 255, 0.16),
+      inset 0 -1px 0 rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(48px) saturate(220%);
+    -webkit-backdrop-filter: blur(48px) saturate(220%);
+  }
+
+  .floating-liquid-nav::before {
+    content: "";
+    pointer-events: none;
+    position: absolute;
+    inset: 1px;
+    z-index: -1;
+    border-radius: inherit;
+    background:
+      linear-gradient(110deg, rgba(255, 255, 255, 0.16), transparent 24%, rgba(255, 255, 255, 0.06) 52%, transparent 78%),
+      radial-gradient(circle at 24% 18%, rgba(255, 255, 255, 0.12), transparent 22%);
+    opacity: 0.42;
+  }
+
+  .floating-liquid-nav::after {
+    content: "";
+    pointer-events: none;
+    position: absolute;
+    inset: -2px;
+    z-index: -2;
+    border-radius: inherit;
+    background: linear-gradient(135deg, rgba(99, 102, 241, 0.24), transparent 38%, rgba(34, 211, 238, 0.18));
+    filter: blur(18px);
+    opacity: 0.24;
+  }
 }
 
-/* Dot grid background */
-.dot-grid {
-  background-image: radial-gradient(circle, var(--color-border) 1px, transparent 1px);
-  background-size: 24px 24px;
+[data-theme="light"] .floating-liquid-nav {
+  border-color: rgba(255, 255, 255, 0.50);
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.22), rgba(255, 255, 255, 0.06)),
+    radial-gradient(circle at 12% 0%, rgba(99, 102, 241, 0.08), transparent 34%),
+    radial-gradient(circle at 88% 100%, rgba(34, 211, 238, 0.07), transparent 38%),
+    rgba(255, 255, 255, 0.04);
+  box-shadow:
+    0 28px 80px rgba(15, 23, 42, 0.12),
+    0 8px 28px rgba(99, 102, 241, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.48),
+    inset 0 -1px 0 rgba(15, 23, 42, 0.05);
+}
+
+[data-theme="light"] .floating-liquid-nav::before {
+  opacity: 0.30;
+}
+
+[data-theme="light"] .floating-liquid-nav::after {
+  opacity: 0.16;
+}
+/* Liquid glass cards and floating app surfaces */
+.liquid-card {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid color-mix(in oklab, var(--color-glass-border) 78%, transparent);
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.16), transparent 32%),
+    radial-gradient(circle at 0% 0%, rgba(99, 102, 241, 0.16), transparent 34%),
+    radial-gradient(circle at 100% 100%, rgba(34, 211, 238, 0.12), transparent 34%),
+    var(--color-glass);
+  box-shadow: var(--shadow-card);
+  backdrop-filter: blur(28px) saturate(180%);
+  -webkit-backdrop-filter: blur(28px) saturate(180%);
+}
+
+.liquid-card::before {
+  content: "";
+  pointer-events: none;
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.30), transparent 42%),
+    radial-gradient(circle at 18% 12%, rgba(255, 255, 255, 0.28), transparent 22%);
+  opacity: 0.55;
+}
+
+.liquid-card::after {
+  content: "";
+  pointer-events: none;
+  position: absolute;
+  inset: 1px;
+  border-radius: inherit;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08);
+}
+
+.liquid-card > * {
+  position: relative;
+  z-index: 1;
+}
+
+.liquid-card:hover {
+  transform: translateY(-2px);
+  border-color: color-mix(in oklab, var(--color-primary) 42%, var(--color-glass-border));
+  box-shadow: var(--shadow-card-hover);
+}
+
+[data-theme="light"] body {
+  background:
+    radial-gradient(circle at 16% 4%, rgba(99, 102, 241, 0.18), transparent 28rem),
+    radial-gradient(circle at 90% 30%, rgba(34, 211, 238, 0.16), transparent 34rem),
+    linear-gradient(135deg, #f8f8ff 0%, #ffffff 45%, #edfaff 100%);
+}
+
+[data-theme="light"] .liquid-card,
+[data-theme="light"] .liquid-glass {
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.36), rgba(255, 255, 255, 0.12)),
+    radial-gradient(circle at 8% 0%, rgba(99, 102, 241, 0.18), transparent 28%),
+    radial-gradient(circle at 100% 100%, rgba(34, 211, 238, 0.14), transparent 30%);
+  border-color: rgba(255, 255, 255, 0.52);
+  box-shadow:
+    0 26px 90px rgba(15, 23, 42, 0.18),
+    0 8px 28px rgba(99, 102, 241, 0.10),
+    inset 0 1px 0 rgba(255, 255, 255, 0.82),
+    inset 0 -1px 0 rgba(15, 23, 42, 0.06);
+}
+
+[data-theme="light"] .ambient-grid {
+  pointer-events: none;
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  background-image:
+    linear-gradient(rgba(168, 181, 255, 0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(168, 181, 255, 0.025) 1px, transparent 1px);
+  background-size: 64px 64px;
+  mask-image: radial-gradient(circle at 50% 28%, black, transparent 76%);
+}
+
+/* Final polished cockpit overrides */
+body {
+  background:
+    radial-gradient(circle at 16% 16%, rgba(124, 92, 255, 0.42), transparent 24rem),
+    radial-gradient(circle at 52% -10%, rgba(34, 211, 238, 0.22), transparent 30rem),
+    radial-gradient(circle at 92% 84%, rgba(37, 99, 235, 0.30), transparent 24rem),
+    radial-gradient(circle at 18% 92%, rgba(139, 92, 246, 0.36), transparent 24rem),
+    linear-gradient(135deg, #050617 0%, #07112f 38%, #15072f 100%);
+}
+
+.ambient-orb {
+  pointer-events: none;
+  position: fixed;
+  z-index: 0;
+  border-radius: 9999px;
+  filter: blur(22px);
+  opacity: 0.30;
+  animation: liquid-float 12s ease-in-out infinite alternate;
+}
+
+.ambient-orb-one {
+  left: 18%;
+  top: 8%;
+  height: 18rem;
+  width: 18rem;
+  background: radial-gradient(circle, rgba(124, 92, 255, 0.32), transparent 66%);
+}
+
+.ambient-orb-two {
+  bottom: 8%;
+  right: 8%;
+  height: 22rem;
+  width: 22rem;
+  background: radial-gradient(circle, rgba(34, 211, 238, 0.18), transparent 68%);
+  animation-delay: -3s;
+}
+
+.ambient-grid {
+  pointer-events: none;
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  background-image:
+    linear-gradient(rgba(168, 181, 255, 0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(168, 181, 255, 0.025) 1px, transparent 1px);
+  background-size: 64px 64px;
+  mask-image: radial-gradient(circle at 50% 28%, black, transparent 76%);
+}
+
+.orion-cockpit {
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.095), rgba(255, 255, 255, 0.022)),
+    radial-gradient(circle at 22% 0%, rgba(124, 92, 255, 0.26), transparent 32%),
+    radial-gradient(circle at 52% 0%, rgba(34, 211, 238, 0.16), transparent 30%),
+    radial-gradient(circle at 100% 100%, rgba(37, 99, 235, 0.34), transparent 32%),
+    rgba(5, 9, 30, 0.78);
+  box-shadow:
+    0 34px 110px rgba(0, 0, 0, 0.50),
+    0 0 0 1px rgba(185, 196, 255, 0.16),
+    inset 0 1px 0 rgba(255, 255, 255, 0.18),
+    inset 0 0 110px rgba(124, 92, 255, 0.09);
+}
+
+.orion-cockpit::after {
+  content: none !important;
+}
+
+.neon-panel {
+  border: 1px solid rgba(163, 178, 255, 0.20);
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.10), rgba(255, 255, 255, 0.026)),
+    radial-gradient(circle at 0% 0%, rgba(124, 92, 255, 0.18), transparent 34%),
+    radial-gradient(circle at 100% 100%, rgba(34, 211, 238, 0.12), transparent 34%),
+    rgba(8, 13, 39, 0.58);
+  box-shadow:
+    0 22px 70px rgba(0, 0, 0, 0.34),
+    inset 0 1px 0 rgba(255, 255, 255, 0.14),
+    0 0 0 1px rgba(124, 92, 255, 0.10);
+  backdrop-filter: blur(30px) saturate(180%);
+  -webkit-backdrop-filter: blur(30px) saturate(180%);
+}
+
+.neon-active {
+  background:
+    linear-gradient(135deg, rgba(124, 92, 255, 0.44), rgba(37, 99, 235, 0.22)),
+    rgba(255, 255, 255, 0.04);
+  border-color: rgba(160, 139, 255, 0.62) !important;
+  box-shadow:
+    0 0 0 1px rgba(194, 181, 255, 0.22),
+    0 0 24px rgba(124, 92, 255, 0.44),
+    inset 0 1px 0 rgba(255, 255, 255, 0.18);
+}
+
+@keyframes liquid-float {
+  from { transform: translate3d(0, 0, 0) scale(1); }
+  to { transform: translate3d(18px, -14px, 0) scale(1.04); }
+}
+
+/* Active nav text color (theme-adaptive) */
+.neon-active {
+  color: #ffffff;
+}
+
+/* Light-mode surfaces for the cockpit shell + neon panels */
+[data-theme="light"] body {
+  background:
+    radial-gradient(circle at 16% 8%, rgba(124, 92, 255, 0.16), transparent 26rem),
+    radial-gradient(circle at 88% 18%, rgba(34, 211, 238, 0.12), transparent 28rem),
+    radial-gradient(circle at 50% 100%, rgba(99, 102, 241, 0.12), transparent 30rem),
+    linear-gradient(135deg, #f5f6ff 0%, #ffffff 48%, #eef6ff 100%);
+}
+
+[data-theme="light"] .orion-cockpit {
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.66), rgba(255, 255, 255, 0.4)),
+    radial-gradient(circle at 22% 0%, rgba(124, 92, 255, 0.10), transparent 32%),
+    radial-gradient(circle at 100% 100%, rgba(37, 99, 235, 0.10), transparent 32%),
+    rgba(248, 249, 255, 0.92);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.85),
+    inset 0 0 120px rgba(124, 92, 255, 0.05);
+}
+
+[data-theme="light"] .neon-panel {
+  border-color: rgba(124, 92, 255, 0.18);
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.66)),
+    radial-gradient(circle at 0% 0%, rgba(124, 92, 255, 0.08), transparent 34%),
+    radial-gradient(circle at 100% 100%, rgba(34, 211, 238, 0.06), transparent 34%);
+  box-shadow:
+    0 22px 70px rgba(15, 23, 42, 0.10),
+    inset 0 1px 0 rgba(255, 255, 255, 0.92),
+    0 0 0 1px rgba(124, 92, 255, 0.08);
+}
+
+[data-theme="light"] .neon-active {
+  color: #4316c4;
+  background:
+    linear-gradient(135deg, rgba(124, 92, 255, 0.20), rgba(37, 99, 235, 0.10)),
+    rgba(255, 255, 255, 0.6);
+  border-color: rgba(124, 92, 255, 0.45) !important;
+  box-shadow:
+    0 0 0 1px rgba(124, 92, 255, 0.18),
+    0 6px 18px rgba(124, 92, 255, 0.18);
 }

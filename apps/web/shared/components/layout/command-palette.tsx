@@ -14,7 +14,7 @@ import {
 
 const quickActions = [
   { label: "Create new task", icon: FileText, action: "/tasks" },
-  { label: "Ask AI", icon: Sparkles, action: "/ai" },
+  { label: "Ask Nova", icon: Sparkles, action: "/ai" },
   { label: "Go to calendar", icon: Hash, action: "/calendar" },
 ];
 
@@ -24,14 +24,15 @@ export function CommandPalette() {
 
   useEffect(() => {
     const down = (e: KeyboardEvent) => {
-      if (e.key === "k" && (e.metaKey || e.ctrlKey)) {
+      if ((e.key.toLowerCase() === "k" || e.code === "KeyK") && (e.metaKey || e.ctrlKey)) {
         e.preventDefault();
-        setCommandPaletteOpen(!commandPaletteOpen);
+        const state = useAppStore.getState();
+        state.setCommandPaletteOpen(!state.commandPaletteOpen);
       }
     };
-    document.addEventListener("keydown", down);
-    return () => document.removeEventListener("keydown", down);
-  }, [commandPaletteOpen, setCommandPaletteOpen]);
+    window.addEventListener("keydown", down, { capture: true });
+    return () => window.removeEventListener("keydown", down, { capture: true });
+  }, []);
 
   if (!commandPaletteOpen) return null;
 
@@ -93,7 +94,7 @@ export function CommandPalette() {
 
           <div className="flex items-center justify-between border-t border-border px-4 py-2">
             <p className="text-[10px] text-muted-foreground">
-              Navigate with ↑↓ · Select with ↵ · Close with ESC
+              Arrow keys to navigate - Enter to select - Escape to close
             </p>
           </div>
         </Command>

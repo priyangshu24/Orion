@@ -8,6 +8,7 @@ import {
   BarChart3,
   Heart,
   Bell,
+  Blocks,
   type LucideIcon,
 } from "lucide-react";
 
@@ -23,7 +24,8 @@ export const mainNavItems: NavItem[] = [
   { label: "Tasks", href: "/tasks", icon: CheckSquare, badge: "12" },
   { label: "Calendar", href: "/calendar", icon: Calendar },
   { label: "Emails", href: "/emails", icon: Mail, badge: "3" },
-  { label: "AI Assistant", href: "/ai", icon: Sparkles },
+  { label: "Nova", href: "/ai", icon: Sparkles },
+  { label: "Connectors", href: "/connectors", icon: Blocks },
 ];
 
 export const secondaryNavItems: NavItem[] = [

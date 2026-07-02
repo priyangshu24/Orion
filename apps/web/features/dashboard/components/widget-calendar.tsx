@@ -2,8 +2,18 @@
 
 import { Card, CardHeader, CardTitle, CardContent } from "@/shared/components/ui/card";
 import { mockEvents } from "../constants/mock-data";
-import { ArrowUpRight, MapPin, Users } from "lucide-react";
-import { format } from "date-fns";
+import { ArrowUpRight, Users } from "lucide-react";
+
+const timeFormatter = new Intl.DateTimeFormat("en-US", {
+  hour: "numeric",
+  minute: "2-digit",
+  hour12: true,
+  timeZone: "UTC",
+});
+
+function formatEventTime(value: string) {
+  return timeFormatter.format(new Date(value));
+}
 
 export function WidgetCalendar() {
   return (
@@ -25,8 +35,7 @@ export function WidgetCalendar() {
             <div className="flex-1 space-y-1">
               <p className="text-sm font-medium">{event.title}</p>
               <p className="text-xs text-muted-foreground">
-                {format(new Date(event.start), "h:mm a")} –{" "}
-                {format(new Date(event.end), "h:mm a")}
+                {formatEventTime(event.start)} - {formatEventTime(event.end)}
               </p>
               {event.attendees && (
                 <div className="flex items-center gap-1 text-xs text-muted-foreground">

@@ -40,9 +40,9 @@ export function WidgetTasks() {
               <StatusIcon
                 className={cn("h-4 w-4 shrink-0", priorityColors[task.priority])}
               />
-              <span className="flex-1 truncate text-sm">{task.title}</span>
+              <span className="min-w-0 flex-1 truncate text-sm">{task.title}</span>
               {task.tags[0] && (
-                <Badge variant="secondary" className="text-[10px]">
+                <Badge variant="secondary" className="shrink-0 text-[10px]">
                   {task.tags[0]}
                 </Badge>
               )}

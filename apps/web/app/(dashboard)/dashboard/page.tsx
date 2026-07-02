@@ -12,31 +12,29 @@ import {
 
 export default function DashboardPage() {
   return (
-    <div className="space-y-6">
-      {/* Greeting */}
-      <div>
+    <div className="flex flex-col items-stretch justify-start">
+      <section className="mt-0 pt-0">
         <h2 className="text-xl font-bold tracking-tight">
           Good morning, Alex
         </h2>
         <p className="text-sm text-muted-foreground">
           Here&apos;s what&apos;s on your plate today.
         </p>
-      </div>
+      </section>
 
-      {/* Bento grid */}
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-        <div className="lg:col-span-2">
+      <section className="mt-6 grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
+        <div className="xl:col-span-2">
           <WidgetTasks />
         </div>
         <WidgetProductivity />
         <WidgetCalendar />
         <WidgetFocusTimer />
         <WidgetEmails />
-        <div className="lg:col-span-2">
+        <div className="xl:col-span-2">
           <WidgetAI />
         </div>
         <WidgetQuickActions />
-      </div>
+      </section>
     </div>
   );
 }
