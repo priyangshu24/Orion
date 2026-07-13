@@ -9,6 +9,7 @@ import {
   Heart,
   Bell,
   Blocks,
+  BrainCircuit,
   type LucideIcon,
 } from "lucide-react";
 
@@ -25,6 +26,7 @@ export const mainNavItems: NavItem[] = [
   { label: "Calendar", href: "/calendar", icon: Calendar },
   { label: "Emails", href: "/emails", icon: Mail, badge: "3" },
   { label: "Nova", href: "/ai", icon: Sparkles },
+  { label: "Intelligence", href: "/intelligence", icon: BrainCircuit },
   { label: "Connectors", href: "/connectors", icon: Blocks },
 ];
 
