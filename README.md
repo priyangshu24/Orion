@@ -1,17 +1,35 @@
 <div align="center">
 
-# 🌌 Orion
+<img src="docs/brand/orion-banner.png" alt="Orion — Ask More From CRM." width="820">
 
-**Ask More From CRM.**
+<h3>An AI-native CRM and productivity workspace that doesn't just store customer data — it understands it.</h3>
 
-An AI-powered CRM & productivity workspace that doesn't just store customer data — it understands it.
+<p>
+  <a href="#status"><img alt="Status" src="https://img.shields.io/badge/status-active_development-22d3ee?style=for-the-badge&labelColor=0b1220"></a>
+  <a href="#roadmap"><img alt="Phase" src="https://img.shields.io/badge/phase-2%20%C2%B7%20backend-efb34f?style=for-the-badge&labelColor=0b1220"></a>
+  <a href="#license"><img alt="License" src="https://img.shields.io/badge/license-proprietary-94a3b8?style=for-the-badge&labelColor=0b1220"></a>
+</p>
 
-[![Status](https://img.shields.io/badge/status-active_development-6366f1?style=flat-square)](#status)
-[![Node](https://img.shields.io/badge/node-%E2%89%A520-3c873a?style=flat-square&logo=node.js&logoColor=white)](https://nodejs.org)
-[![Next.js](https://img.shields.io/badge/Next.js-16.2-000?style=flat-square&logo=next.js)](https://nextjs.org)
-[![React](https://img.shields.io/badge/React-19-149eca?style=flat-square&logo=react)](https://react.dev)
-[![Tailwind](https://img.shields.io/badge/Tailwind-v4-38bdf8?style=flat-square&logo=tailwindcss&logoColor=white)](https://tailwindcss.com)
-[![License](https://img.shields.io/badge/license-proprietary-a855f7?style=flat-square)](#license)
+<p>
+  <a href="https://nextjs.org"><img alt="Next.js" src="https://img.shields.io/badge/Next.js-16.2-000?style=flat-square&logo=next.js&logoColor=white"></a>
+  <a href="https://react.dev"><img alt="React" src="https://img.shields.io/badge/React-19-149eca?style=flat-square&logo=react&logoColor=white"></a>
+  <a href="https://www.typescriptlang.org"><img alt="TypeScript" src="https://img.shields.io/badge/TypeScript-5.7-3178c6?style=flat-square&logo=typescript&logoColor=white"></a>
+  <a href="https://tailwindcss.com"><img alt="Tailwind" src="https://img.shields.io/badge/Tailwind-v4-38bdf8?style=flat-square&logo=tailwindcss&logoColor=white"></a>
+  <a href="https://go.dev"><img alt="Go" src="https://img.shields.io/badge/Go-1.24-00add8?style=flat-square&logo=go&logoColor=white"></a>
+  <a href="https://www.postgresql.org"><img alt="Postgres" src="https://img.shields.io/badge/Postgres-17-4169e1?style=flat-square&logo=postgresql&logoColor=white"></a>
+  <a href="https://nodejs.org"><img alt="Node" src="https://img.shields.io/badge/Node-%E2%89%A520-3c873a?style=flat-square&logo=node.js&logoColor=white"></a>
+</p>
+
+<p>
+  <b>
+  <a href="#vision">Vision</a> &nbsp;·&nbsp;
+  <a href="#core-capabilities">Capabilities</a> &nbsp;·&nbsp;
+  <a href="#architecture">Architecture</a> &nbsp;·&nbsp;
+  <a href="#installation">Getting Started</a> &nbsp;·&nbsp;
+  <a href="#roadmap">Roadmap</a> &nbsp;·&nbsp;
+  <a href="#contributing">Contributing</a>
+  </b>
+</p>
 
 </div>
 
@@ -20,6 +38,7 @@ An AI-powered CRM & productivity workspace that doesn't just store customer data
 ## Table of Contents
 
 - [Vision](#vision)
+- [Interface](#interface)
 - [Core Capabilities](#core-capabilities)
 - [Architecture](#architecture)
 - [How It Works — End-to-End Flow](#how-it-works--end-to-end-flow)
@@ -45,6 +64,18 @@ An AI-powered CRM & productivity workspace that doesn't just store customer data
 Traditional CRMs store information. **Orion understands it.**
 
 Orion is being built as a CRM that actively helps users discover insights, automate repetitive work, manage contracts, analyze vendors, and interact with business knowledge through AI — grounded in a premium, keyboard-first interface inspired by Linear, Attio, Arc Browser, Raycast, and Superhuman.
+
+---
+
+## Interface
+
+<div align="center">
+
+<img src="docs/screenshots/auth-register.png" alt="Orion sign-up screen" width="900">
+
+<sub><i>Sign-up — glass surfaces, token-driven spacing, fully responsive from 1440px down to 360px.</i></sub>
+
+</div>
 
 ---
 
@@ -128,28 +159,28 @@ Orion is a **modular monorepo** designed to evolve from a modular monolith into 
 
 ```mermaid
 flowchart TB
-    subgraph Client["🖥️ Client — apps/web (Next.js 16 + React 19)"]
+    subgraph Client["Client — apps/web (Next.js 16 + React 19)"]
         direction LR
         UI[UI Layer<br/>Feature Slices]
         State[State Layer<br/>Zustand + TanStack Query]
         Router[App Router<br/>Server Components]
     end
 
-    subgraph API["⚙️ API Layer — services/api (Go + Fiber)"]
+    subgraph API["API Layer — services/api (Go + Fiber)"]
         direction LR
         Auth[Auth<br/>JWT / OAuth]
         REST[REST Handlers]
         WS[WebSockets<br/>Live Updates]
     end
 
-    subgraph AI["🧠 AI Layer — services/ai (Python + FastAPI)"]
+    subgraph AI["AI Layer — services/ai (Python + FastAPI)"]
         direction LR
         LLM[LLM Orchestration<br/>LangChain / LangGraph]
         RAG[RAG Pipeline<br/>pgvector]
         MCP[MCP Servers<br/>Tool Runner]
     end
 
-    subgraph Data["💾 Data Layer"]
+    subgraph Data["Data Layer"]
         direction LR
         PG[(PostgreSQL 17<br/>+ pgvector)]
         Redis[(Redis 8<br/>Cache / Queues)]
@@ -191,13 +222,13 @@ A typical AI-assisted request (e.g. *"Summarize this quarter's deals with Acme C
 ```mermaid
 sequenceDiagram
     autonumber
-    actor U as 👤 User
-    participant W as 🖥️ Web (Next.js)
-    participant A as ⚙️ API (Go)
-    participant N as 🧠 AI (Python)
-    participant V as 🗂️ pgvector
-    participant D as 💾 Postgres
-    participant M as 🔌 MCP Servers
+    actor U as User
+    participant W as Web (Next.js)
+    participant A as API (Go)
+    participant N as AI (Python)
+    participant V as pgvector
+    participant D as Postgres
+    participant M as MCP Servers
 
     U->>W: Prompts Nova
     W->>A: POST /api/ai/query (JWT)
@@ -316,7 +347,10 @@ orion/
 ├── infrastructure/
 │   └── docker-compose.yml         # Postgres + Redis (phase-2 profile)
 │
-├── docs/                          # Architecture & design specs
+├── docs/
+│   ├── brand/                     # Logo, banner, brand marks
+│   └── screenshots/               # UI captures used in docs
+│
 ├── scripts/                       # Dev / build / seed scripts
 ├── package.json                   # Workspace root
 └── README.md
@@ -569,12 +603,12 @@ gantt
 
 | Phase | Focus | Status |
 |---|---|---|
-| **1** | Design system, frontend foundation, feature architecture | ✅ Shipped |
-| **2** | Backend foundation, auth, user management | 🚧 In progress |
-| **3** | CRM core (contacts, companies, deals) | ⏳ Planned |
-| **4** | Calendar, tasks, notifications | ⏳ Planned |
-| **5** | AI integration, RAG, document intelligence | ⏳ Planned |
-| **6** | Analytics, automation, enterprise capabilities | ⏳ Planned |
+| **1** | Design system, frontend foundation, feature architecture | **Shipped** |
+| **2** | Backend foundation, auth, user management | **In progress** |
+| **3** | CRM core (contacts, companies, deals) | Planned |
+| **4** | Calendar, tasks, notifications | Planned |
+| **5** | AI integration, RAG, document intelligence | Planned |
+| **6** | Analytics, automation, enterprise capabilities | Planned |
 
 ---
 
@@ -636,7 +670,7 @@ Contributions are welcome once the project reaches its first tagged release. Unt
 
 ## Status
 
-🚧 **Active Development.** Phase 1 (frontend foundation, design system, feature-sliced architecture) is complete. Phase 2 (Go API, auth, data layer) is next. The project is not yet ready for production.
+**Active development.** Phase 1 — frontend foundation, design system, feature-sliced architecture — is complete. Phase 2 — Go API, auth, and the data layer — is underway. Orion is not yet ready for production use.
 
 ---
 
@@ -648,8 +682,10 @@ This project is currently under active development and is **not yet available fo
 
 <div align="center">
 
+<img src="docs/brand/orion-mark.png" alt="" width="56">
+
 **Orion — Ask More From CRM.**
 
-Built with care. Designed to scale.
+<sub>Built with care. Designed to scale.</sub>
 
 </div>

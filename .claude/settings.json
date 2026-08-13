@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash('C:\\\\Users\\\\KIIT0001/.claude/skills/gstack/browse/dist/browse' viewport *)",
+      "Bash('C:\\\\Users\\\\KIIT0001/.claude/skills/gstack/browse/dist/browse' goto *)",
+      "Bash('C:\\\\Users\\\\KIIT0001/.claude/skills/gstack/browse/dist/browse' screenshot *)",
+      "Bash(echo ok *)",
+      "Bash('C:\\\\Users\\\\KIIT0001/.claude/skills/gstack/browse/dist/browse' js *)"
+    ]
+  }
+}

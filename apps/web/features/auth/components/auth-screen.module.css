@@ -1,0 +1,119 @@
+.page {
+  min-height: 100svh;
+  color: #f6f8f8;
+  background: linear-gradient(90deg, rgba(0, 8, 12, .06), rgba(0, 8, 12, .18)), url("/orion-auth-bg.png") center / cover, #010a0f;
+  isolation: isolate;
+}
+.page::before { position: fixed; inset: 0; z-index: -1; content: ""; background: radial-gradient(circle at 60% 18%, rgba(53,232,240,.07), transparent 28%), linear-gradient(90deg, rgba(0,7,10,.06), rgba(0,7,10,.3)); }
+/* Layout only — no border, fill or shadow. The story and the form card each sit
+   directly on the page background instead of inside a shared frame. */
+.shell { display: grid; grid-template-columns: minmax(310px, .92fr) minmax(430px, 1.08fr); width: min(1440px, 100%); min-height: 100svh; margin: 0 auto; }
+.story { display: flex; flex-direction: column; min-width: 0; padding: 45px 30px 20px 66px; }
+.brand { display: flex; align-items: center; width: max-content; }
+.brandLogo { width: clamp(270px, 21vw, 330px); height: auto; object-fit: contain; filter: drop-shadow(0 5px 18px rgba(0,0,0,.3)); }
+.brandMark { position: relative; display: block; width: 70px; height: 70px; overflow: hidden; border-radius: 50%; background: #010708; }
+.brandMarkImage { position: absolute; top: -2px; left: -21px; width: 112px; max-width: none; height: 75px; object-fit: cover; mix-blend-mode: screen; }
+.brandCopy { display: flex; flex-direction: column; gap: 8px; }
+.brandCopy strong { font-size: clamp(25px, 2.1vw, 42px); font-weight: 500; line-height: 1; letter-spacing: .35em; text-shadow: 0 0 18px rgba(255,255,255,.15); }
+.brandCopy small { color: #efb34f; font-size: clamp(7px, .62vw, 11px); font-weight: 700; letter-spacing: .4em; }
+.pitch { margin-top: clamp(58px, 8vh, 128px); }
+.pitch h1 { font-size: clamp(29px, 2.45vw, 46px); font-weight: 650; line-height: 1.18; letter-spacing: -.04em; text-shadow: 0 2px 16px rgba(0,0,0,.55); }
+.pitch em { color: #eca83c; font-style: normal; }
+.pitch p { margin-top: 20px; color: rgba(225,232,232,.72); font-size: 15px; line-height: 1.75; }
+.benefits { display: grid; grid-template-columns: repeat(3, 1fr); margin-top: auto; overflow: hidden; border: 1px solid rgba(177,237,239,.18); border-radius: 18px; background: linear-gradient(135deg, rgba(21,40,43,.82), rgba(5,17,22,.74)); box-shadow: inset 0 1px 0 rgba(255,255,255,.07), 0 20px 44px rgba(0,0,0,.26); backdrop-filter: blur(18px); }
+.benefits article { padding: 25px 18px 24px; text-align: center; }
+.benefits article + article { border-left: 1px solid rgba(177,237,239,.12); }
+.benefitIcon { display: grid; width: 54px; height: 54px; margin: 0 auto 15px; place-items: center; border: 1px solid rgba(121,247,248,.3); border-radius: 50%; background: rgba(4,22,28,.65); box-shadow: 0 0 20px rgba(64,236,237,.11); }
+.benefitIcon svg { width: 25px; color: #58f1f2; stroke-width: 1.5; }
+.benefits h2 { font-size: 12px; font-weight: 650; }
+.benefits p { margin-top: 9px; color: rgba(225,232,232,.66); font-size: 10px; line-height: 1.55; }
+.copyright { margin: 26px 0 0 20px; color: rgba(225,232,232,.6); font-size: 10px; }
+/* Card scale. Every metric inside the panel derives from these tokens, so the
+   short-viewport tiers below only retune the tokens and stay in proportion. */
+.formPanel { --padX: 30px; --padT: 28px; --padB: 22px; --radius: 26px; --title: 25px; --sub: 11px; --label: 10px; --micro: 9px; --ctrl: 40px; --icon: 17px; --row: 9px; --fieldGap: 4px; --headGap: 16px; --footGap: 11px; --star: 38px; }
+.formPanel { position: relative; align-self: center; isolation: isolate; width: min(100%, 390px); margin: 24px auto; overflow: hidden; border: 1px solid rgba(188,246,248,.48); border-radius: var(--radius); padding: var(--padT) var(--padX) var(--padB); background: linear-gradient(135deg, rgba(210,248,250,.09), transparent 27%, rgba(1,13,19,.15) 62%), radial-gradient(circle at 100% 0%, rgba(255,193,105,.13), transparent 22%), radial-gradient(circle at 0% 45%, rgba(47,226,238,.11), transparent 31%), rgba(1,13,19,.58); box-shadow: 0 28px 80px rgba(0,0,0,.5), 0 0 34px rgba(58,224,235,.2), inset 0 1px 0 rgba(255,255,255,.32), inset 2px 0 10px rgba(91,235,241,.17), inset -2px 0 12px rgba(255,200,121,.07), inset 0 -2px 14px rgba(48,231,241,.15); backdrop-filter: blur(34px) saturate(155%); -webkit-backdrop-filter: blur(34px) saturate(155%); }
+.formPanel::before { position: absolute; inset: 0; z-index: -1; border-radius: inherit; content: ""; pointer-events: none; background: linear-gradient(115deg, rgba(255,255,255,.18), transparent 13%, transparent 68%, rgba(68,233,241,.07)), radial-gradient(circle at 6% 2%, rgba(196,246,249,.25), transparent 13%), radial-gradient(circle at 94% 4%, rgba(255,201,125,.16), transparent 12%); opacity: .7; }
+.formPanel::after { position: absolute; inset: 1px; z-index: 2; border-radius: calc(var(--radius) - 1px); content: ""; pointer-events: none; box-shadow: inset 0 0 0 1px rgba(255,255,255,.06), inset 3px 0 8px rgba(74,236,244,.11), inset 0 -3px 9px rgba(58,229,239,.12); }
+.formPanel > * { position: relative; z-index: 1; }
+.formGlow { position: absolute; right: -70px; bottom: -90px; z-index: 0; width: 280px; height: 200px; border-radius: 50%; background: rgba(61,231,242,.19); filter: blur(44px); pointer-events: none; }
+.panelStar { position: absolute; top: calc(var(--padT) - 6px); right: calc(var(--padX) - 12px); display: grid; width: var(--star); height: var(--star); place-items: center; border: 1px solid rgba(194,241,241,.52); border-radius: 50%; color: #f5c06a; font-size: calc(var(--star) * .54); background: radial-gradient(circle, rgba(246,181,77,.18), rgba(5,21,25,.64) 64%); box-shadow: 0 0 22px rgba(247,185,82,.28), inset 0 0 12px rgba(255,255,255,.1); }
+.formHeader { padding-right: calc(var(--star) + 12px); }
+.formHeader h2 { font-size: var(--title); font-weight: 650; line-height: 1.15; letter-spacing: -.03em; }
+.formHeader p { margin-top: 7px; color: rgba(225,232,232,.68); font-size: var(--sub); line-height: 1.45; }
+.form { display: grid; gap: var(--row); margin-top: var(--headGap); }
+.field { display: grid; gap: var(--fieldGap); color: #f1f5f5; font-size: var(--label); font-weight: 550; }
+.inputShell { display: flex; height: var(--ctrl); align-items: center; gap: 12px; border: 1px solid rgba(195,238,241,.3); border-radius: 10px; padding: 0 14px; background: linear-gradient(180deg, rgba(255,255,255,.1), rgba(4,17,23,.42)); box-shadow: inset 0 1px 5px rgba(255,255,255,.12), inset 0 -1px 4px rgba(44,213,222,.04), 0 4px 13px rgba(0,0,0,.16), 0 0 14px rgba(73,225,235,.06); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); transition: border-color 160ms ease, box-shadow 160ms ease; }
+.inputShell:focus-within { border-color: rgba(91,242,245,.7); box-shadow: 0 0 0 3px rgba(64,222,230,.1), 0 0 18px rgba(73,225,235,.13); }
+.inputShell > svg { width: var(--icon); color: rgba(222,237,238,.75); stroke-width: 1.6; }
+.inputShell input { min-width: 0; flex: 1; outline: none; color: #f4f8f8; font-size: var(--sub); background: transparent; }
+.inputShell input::placeholder { color: rgba(218,227,228,.55); }
+.eyeButton { display: grid; width: 28px; height: 28px; cursor: pointer; place-items: center; border: 0; color: rgba(232,240,240,.8); background: transparent; }
+.eyeButton svg { width: var(--icon); }
+.requirements { display: flex; flex-wrap: nowrap; justify-content: space-between; gap: 6px; margin: -1px 2px 0; color: rgba(229,238,238,.78); font-size: 8px; white-space: nowrap; }
+.terms, .loginOptions, .loginOptions label { display: flex; align-items: center; color: rgba(225,232,232,.72); font-size: var(--micro); }
+.terms { gap: 9px; }
+.terms input, .loginOptions input { width: 15px; height: 15px; flex: none; accent-color: #35dadd; }
+.terms a, .loginOptions a, .switchMode a { color: #35e5e8; }
+.loginOptions { justify-content: space-between; }
+.loginOptions label { gap: 8px; }
+.primaryButton, .googleButton { display: flex; height: var(--ctrl); align-items: center; justify-content: center; gap: 10px; cursor: pointer; border-radius: 10px; color: #f7ffff; font-size: var(--sub); font-weight: 550; transition: transform 160ms ease, filter 160ms ease; }
+.primaryButton { border: 1px solid rgba(164,255,255,.64); color: #031315; background: linear-gradient(100deg, #5be2e4, #268d96 26%, #387d83 64%, #74f2f4); box-shadow: inset 0 1px 8px rgba(255,255,255,.45), 0 0 25px rgba(53,225,231,.25); text-shadow: 0 1px 0 rgba(255,255,255,.24); }
+.primaryButton svg { width: 17px; }
+.primaryButton:hover, .googleButton:hover { filter: brightness(1.12); transform: translateY(-1px); }
+.divider { position: relative; display: flex; height: 10px; align-items: center; justify-content: center; color: rgba(238,244,244,.88); font-size: 10px; }
+.divider::before, .divider::after { height: 1px; flex: 1; content: ""; background: linear-gradient(90deg, transparent, rgba(197,228,230,.26)); }
+.divider::after { background: linear-gradient(90deg, rgba(197,228,230,.26), transparent); }
+.divider span { padding: 0 13px; }
+.googleButton { border: 1px solid rgba(196,237,240,.34); background: linear-gradient(180deg, rgba(255,255,255,.13), rgba(3,18,24,.38)); box-shadow: inset 0 1px 7px rgba(255,255,255,.16), inset 0 -1px 4px rgba(55,224,233,.05), 0 4px 15px rgba(0,0,0,.18), 0 0 18px rgba(73,225,235,.09); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); }
+.googleIcon { font-size: 18px; font-weight: 750; background: conic-gradient(from -45deg, #4285f4 0 25%, #34a853 0 45%, #fbbc05 0 68%, #ea4335 0 85%, #4285f4 0); background-clip: text; color: transparent; }
+.switchMode { position: relative; margin-top: var(--footGap); color: rgba(225,232,232,.66); font-size: var(--micro); text-align: center; }
+@media (min-width: 1001px) {
+  .formPanel { transform: translateX(32px); }
+}
+/* Short desktop viewports — laptops, browser zoom, Windows display scaling.
+   Every height-driving metric interpolates between a tight value at a 560px-tall
+   window and the roomy value at 950px, so the panel shrinks with the window
+   instead of overflowing it. Each clamp() is min@560 / linear / max@950. */
+@media (min-width: 1001px) and (max-height: 950px) {
+  .story { padding-top: 30px; padding-bottom: 18px; }
+  .brandMark { width: 62px; height: 62px; }
+  .brandMarkImage { left: -19px; width: 100px; height: 67px; }
+  .pitch { margin-top: 38px; }
+  .pitch h1 { font-size: clamp(29px, 2.25vw, 40px); }
+  .pitch p { margin-top: 14px; line-height: 1.65; }
+  .benefits article { padding-top: 20px; padding-bottom: 20px; }
+  .benefitIcon { width: 48px; height: 48px; margin-bottom: 12px; }
+  .benefitIcon svg { width: 21px; }
+  .benefits p { margin-top: 8px; }
+  .copyright { margin-top: 14px; }
+  .formPanel { --padT: 26px; --padB: 22px; --radius: 26px; --title: 25px; --ctrl: 40px; --row: 10px; --headGap: 16px; --footGap: 12px; --star: 40px; margin: 16px auto; }
+}
+@media (min-width: 1001px) and (max-height: 760px) {
+  .formPanel { --padT: 22px; --padB: 18px; --title: 24px; --ctrl: 39px; --row: 9px; --fieldGap: 4px; --headGap: 14px; --footGap: 10px; --star: 38px; margin: 12px auto; }
+}
+@media (min-width: 1001px) and (max-height: 680px) {
+  .formPanel { --padT: 20px; --padB: 16px; --title: 23px; --ctrl: 37px; --row: 8px; --headGap: 12px; --footGap: 9px; --star: 36px; margin: 10px auto; }
+}
+@media (min-width: 1001px) and (max-height: 600px) {
+  .formPanel { --padT: 16px; --padB: 14px; --radius: 22px; --title: 21px; --sub: 12px; --label: 11px; --ctrl: 35px; --icon: 17px; --row: 7px; --fieldGap: 3px; --headGap: 10px; --footGap: 7px; --star: 34px; margin: 8px auto; }
+}
+@media (max-width: 1000px) {
+  .shell { grid-template-columns: 1fr; }
+  .story { min-height: 520px; padding: 34px 32px 28px; }
+  .pitch { margin-top: 65px; }
+  .benefits { margin-top: 64px; }
+  .copyright { display: none; }
+  .formPanel { width: min(390px, calc(100% - 40px)); margin: 0 auto 36px; }
+}
+@media (max-width: 600px) {
+  .story { min-height: auto; padding: 28px 22px 78px; }
+  .brandLogo { width: min(260px, 76vw); }
+  .pitch { margin-top: 58px; }
+  .pitch h1 { font-size: 31px; }
+  .pitch p { font-size: 14px; }
+  .desktopBreak, .benefits { display: none; }
+  .formPanel { --padX: 22px; --padT: 30px; --padB: 26px; --radius: 24px; --title: 26px; --star: 42px; width: calc(100% - 24px); margin-bottom: 12px; }
+  .requirements { flex-wrap: wrap; justify-content: flex-start; font-size: 10px; white-space: normal; }
+  .requirements { justify-content: flex-start; }
+}
+@media (prefers-reduced-motion: reduce) { .primaryButton, .googleButton, .inputShell { transition: none; } }
