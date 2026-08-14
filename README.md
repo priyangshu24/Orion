@@ -37,19 +37,39 @@
 
 ## Table of Contents
 
+**Overview**
 - [Vision](#vision)
 - [Interface](#interface)
 - [Core Capabilities](#core-capabilities)
-- [Architecture](#architecture)
-- [How It Works — End-to-End Flow](#how-it-works--end-to-end-flow)
+- [Implementation Status](#implementation-status)
+
+**Architecture**
+- [System Context](#system-context)
+- [Runtime Topology](#runtime-topology)
+- [Layered Architecture](#layered-architecture)
+- [Frontend Architecture](#frontend-architecture)
+- [Backend Architecture](#backend-architecture)
+- [Data Architecture](#data-architecture)
+- [Deployment Architecture](#deployment-architecture)
+
+**Workflows**
+- [Request Lifecycle](#request-lifecycle)
+- [Authentication Flow](#authentication-flow)
+- [Document Ingestion Pipeline](#document-ingestion-pipeline)
+- [RAG Answer Flow](#rag-answer-flow)
+- [Automation Pipeline](#automation-pipeline)
+- [Development Workflow](#development-workflow)
+- [Adding a Feature Slice](#adding-a-feature-slice)
+- [Git & Release Workflow](#git--release-workflow)
+
+**Reference**
 - [Tech Stack](#tech-stack)
 - [Repository Structure](#repository-structure)
 - [Prerequisites](#prerequisites)
 - [Installation](#installation)
 - [Running the App](#running-the-app)
 - [Environment Variables](#environment-variables)
-- [Development Workflow](#development-workflow)
-- [Infrastructure (Phase 2)](#infrastructure-phase-2)
+- [Infrastructure](#infrastructure)
 - [Testing](#testing)
 - [Design Principles](#design-principles)
 - [Roadmap](#roadmap)
@@ -153,106 +173,612 @@ Orion is being built as a CRM that actively helps users discover insights, autom
 
 ---
 
-## Architecture
+## Implementation Status
 
-Orion is a **modular monorepo** designed to evolve from a modular monolith into independently scalable services without architectural rewrites. Each layer is bounded, feature-first, and independently deployable.
+Orion is mid-build. This table is the honest map of what runs today versus what is designed and scheduled — read it before evaluating any diagram below.
 
-```mermaid
-flowchart TB
-    subgraph Client["Client — apps/web (Next.js 16 + React 19)"]
-        direction LR
-        UI[UI Layer<br/>Feature Slices]
-        State[State Layer<br/>Zustand + TanStack Query]
-        Router[App Router<br/>Server Components]
-    end
-
-    subgraph API["API Layer — services/api (Go + Fiber)"]
-        direction LR
-        Auth[Auth<br/>JWT / OAuth]
-        REST[REST Handlers]
-        WS[WebSockets<br/>Live Updates]
-    end
-
-    subgraph AI["AI Layer — services/ai (Python + FastAPI)"]
-        direction LR
-        LLM[LLM Orchestration<br/>LangChain / LangGraph]
-        RAG[RAG Pipeline<br/>pgvector]
-        MCP[MCP Servers<br/>Tool Runner]
-    end
-
-    subgraph Data["Data Layer"]
-        direction LR
-        PG[(PostgreSQL 17<br/>+ pgvector)]
-        Redis[(Redis 8<br/>Cache / Queues)]
-        S3[(S3<br/>Documents)]
-    end
-
-    Client -->|HTTPS / WS| API
-    Client -.->|Streamed AI events| AI
-    API --> Data
-    API <-->|task queue| AI
-    AI --> Data
-    AI -.->|embeddings| PG
-
-    classDef client fill:#0ea5e9,stroke:#0284c7,color:#fff
-    classDef api fill:#8b5cf6,stroke:#7c3aed,color:#fff
-    classDef ai fill:#ec4899,stroke:#db2777,color:#fff
-    classDef data fill:#10b981,stroke:#059669,color:#fff
-    class Client client
-    class API api
-    class AI ai
-    class Data data
-```
-
-### Layers
-
-| Layer | Responsibility | Tech |
+| Layer | Today | Target |
 |---|---|---|
-| **Client** | UI, routing, local state, optimistic mutations | Next.js 16, React 19, TypeScript, Tailwind v4 |
-| **API** | Business logic, authz, REST + WebSockets | Go 1.24, Fiber |
-| **AI** | LLM orchestration, RAG, document intelligence | Python, FastAPI, LangChain, LangGraph |
-| **Data** | Relational + vector store, cache, object storage | PostgreSQL 17 (+ pgvector), Redis 8, S3 |
+| **Web client** | Fully implemented — 13 routes, 12 feature slices, design system, command palette | — |
+| **Client data** | Feature-local mock constants + Zustand stores | TanStack Query against the Go API |
+| **Intelligence Hub** | Working in-browser simulation — real `.txt`/`.md`/`.csv`/`.docx` text extraction, parent-child chunking, regex entity + PII detection, staged status machine | Server-side pipeline (Docling, Textract, Presidio, pgvector) |
+| **Go API** | Stub — [`services/api/main.go`](services/api/main.go) is an empty `main()` with the Phase 2 contract in comments | Fiber REST + SSE, JWT/RBAC, repositories |
+| **AI service** | Not started | Python + FastAPI, LangChain chains, LangGraph agents |
+| **Workers** | Not started | Redis Streams consumers, ingestion + enrichment jobs |
+| **Data** | Postgres 17 + Redis 8 provisioned via Compose, unused by the app | pgvector, S3, RLS multi-tenancy |
+| **Infrastructure** | Local Compose only | Terraform, ECS Fargate → EKS |
+
+> Diagrams marked **Target** describe the designed system. Diagrams marked **Current** describe code you can run today.
+
+The complete engineering contract for the AI subsystem — decision log, schema, API surface, security pipeline, scaling path — lives in [`docs/intelligence-hub-blueprint.md`](docs/intelligence-hub-blueprint.md). The frontend dependency rules live in [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md).
 
 ---
 
-## How It Works — End-to-End Flow
+# Architecture
 
-A typical AI-assisted request (e.g. *"Summarize this quarter's deals with Acme Corp"*):
+Orion is a **modular monorepo** designed to evolve from a modular monolith into independently scalable services without architectural rewrites. Every layer is bounded, feature-first, and independently deployable.
+
+## System Context
+
+Who talks to Orion, and what Orion talks to.
+
+```mermaid
+flowchart TB
+    User([Sales / Ops / Legal User])
+    Admin([Org Admin])
+
+    subgraph Orion["Orion Platform"]
+        Web[Web Application]
+        Core[Core Services]
+        Intel[Document Intelligence]
+    end
+
+    IdP[OAuth Providers<br/>Google · GitHub · Microsoft]
+    LLMP[LLM Providers<br/>Claude · OpenAI]
+    Tools[External Systems<br/>Slack · GitHub · Linear · Jira<br/>Notion · Salesforce · Drive]
+    Store[Object Storage<br/>S3]
+
+    User --> Web
+    Admin --> Web
+    Web --> Core
+    Core --> Intel
+    Core <--> IdP
+    Intel <--> LLMP
+    Core <-->|MCP protocol| Tools
+    Intel <--> Store
+```
+
+| Actor / System | Relationship |
+|---|---|
+| **User** | Primary operator — CRM records, tasks, calendar, documents, AI chat |
+| **Org Admin** | Manages knowledge bases, permissions, workflow rules, audit exports |
+| **OAuth Providers** | Federated sign-in; identity claims mapped to org + role |
+| **LLM Providers** | Grounded generation and background enrichment; egress-controlled per org |
+| **External Systems** | Two-way tool access over MCP — read context, take actions |
+| **Object Storage** | Document originals and derived artifacts; quarantine and clean buckets |
+
+## Runtime Topology
+
+**Target.** The full service decomposition, matching the blueprint.
+
+```mermaid
+flowchart TB
+    FE[Next.js Frontend<br/>apps/web]
+
+    subgraph Edge
+        GW[ALB + WAF]
+    end
+
+    subgraph Services
+        API[Go API · Fiber<br/>services/api]
+        AIS[Python AI Service<br/>FastAPI · services/ai]
+        WRK[Workers<br/>services/workers]
+    end
+
+    subgraph Stores
+        PG[(PostgreSQL 17<br/>+ pgvector)]
+        RD[(Redis 8<br/>cache · streams · limits)]
+        S3Q[(S3 Quarantine)]
+        S3C[(S3 Clean + Derived)]
+    end
+
+    LLM[Claude API]
+
+    FE -->|HTTPS + JWT| GW --> API
+    FE -.->|presigned PUT| S3Q
+    API --> PG
+    API --> RD
+    API -->|internal HTTP · mTLS| AIS
+    RD -->|consume jobs| WRK
+    WRK --> S3Q
+    WRK --> S3C
+    WRK --> AIS
+    WRK --> PG
+    AIS --> PG
+    AIS -->|embeddings + vectors| PG
+    AIS --> LLM
+    AIS -.->|SSE| API
+    API -.->|SSE| FE
+```
+
+**Traffic rules**
+
+| Path | Protocol | Auth |
+|---|---|---|
+| Frontend → API | HTTPS REST + SSE | JWT with org + role claims |
+| Frontend → S3 | Presigned PUT, 5 min TTL | Presigned signature |
+| API → AI service | Internal HTTP, VPC only | mTLS + service token |
+| Workers → everything | VPC internal | IAM roles + service token |
+| AI service → LLM | HTTPS | API key from Secrets Manager |
+
+## Layered Architecture
+
+Eleven layers. Nine stack vertically; security and automation cross-cut.
+
+```mermaid
+flowchart TB
+    L1[Presentation] --> L2[API]
+    L2 --> L3[Business]
+    L3 --> L4[AI]
+    L3 --> L5[Document Processing]
+    L4 --> L6[Retrieval]
+    L6 --> L7[Knowledge]
+    L5 --> L8[Data]
+    L7 --> L8
+    L8 --> L9[Infrastructure]
+    L10[Security]:::sec -.crosscuts.-> L2 & L3 & L4 & L5 & L8
+    L11[Automation]:::auto -.event-driven.-> L3 & L4 & L5
+    classDef sec fill:#dc2626,color:#fff
+    classDef auto fill:#f59e0b,color:#fff
+```
+
+| Layer | Responsibility | Lives in |
+|---|---|---|
+| **Presentation** | Routes, feature UI, upload, search, chat, doc viewer, citations | `apps/web` |
+| **API** | REST contracts, validation, authn/z, rate limits, SSE fan-out | Go `internal/*/handler` |
+| **Business** | Document lifecycle state machine, KB management, quotas | Go `internal/*/service` |
+| **AI** | LLM orchestration, prompt templates, agents, guardrails | Python `app/generation`, `app/agents` |
+| **Document Processing** | Parse, OCR, clean, chunk, enrich | Python `app/ingestion` + workers |
+| **Retrieval** | Hybrid search, rerank, context building, citation mapping | Python `app/retrieval` |
+| **Knowledge** | Knowledge bases, entities, tags, knowledge graph | Go + Python, Postgres |
+| **Data** | Postgres, vector store, Redis, S3 repositories | Go `internal/*/repository`, Python `app/db` |
+| **Infrastructure** | IaC, queues, secrets, networking, observability | `infrastructure/` |
+| **Security** *(cross-cutting)* | Scan, PII, injection detection, RBAC, audit, encryption | Every layer |
+| **Automation** *(event-driven)* | Post-ingest enrichment, notifications, workflow triggers | Workers |
+
+## Frontend Architecture
+
+**Current.** This layer is fully built and is the reference implementation for the rest of the system.
+
+### Dependency direction
+
+Imports flow one way. A violation in the other direction is an architectural bug.
+
+```mermaid
+flowchart LR
+    App["app/<br/>routes + composition"] --> Features["features/<br/>domain logic + UI"]
+    Features --> Shared["shared/<br/>primitives + layout"]
+    Shared --> Packages["packages/<br/>contracts + config"]
+```
+
+| Tier | Owns | Must not |
+|---|---|---|
+| `app/` | Route segments, layouts, page composition | Contain domain logic |
+| `features/` | Domain UI, stores, schemas, services, mock data | Import another feature's internals |
+| `shared/` | UI primitives, layout chrome, utils, navigation constants | Import from `features/` |
+| `packages/` | Cross-app types, constants, configs | Import from the app at all |
+
+Cross-feature access goes through each slice's public `index.ts` — never a deep path into another slice.
+
+### Feature slice anatomy
+
+Every one of the twelve slices follows the same shape:
+
+```text
+features/<name>/
+├── components/     # React components for this domain
+├── hooks/          # Feature-scoped hooks
+├── constants/      # Static + mock data (Phase 2: deleted)
+├── services/       # API clients and side-effecting logic
+├── schemas/        # Zod schemas — runtime validation
+├── store/          # Zustand slice for client-only UI state
+├── types.ts        # Domain types
+└── index.ts        # Public API of the slice — the only import surface
+```
+
+### Route map
+
+```mermaid
+flowchart TB
+    Root["/"] --> AuthG["(auth)"]
+    Root --> DashG["(dashboard)"]
+
+    AuthG --> L["/login"]
+    AuthG --> R["/register"]
+
+    DashG --> D["/dashboard"]
+    DashG --> T["/tasks"]
+    DashG --> C["/calendar"]
+    DashG --> E["/emails"]
+    DashG --> AI["/ai · Nova"]
+    DashG --> I["/intelligence"]
+    DashG --> ID["/intelligence/[id]"]
+    DashG --> CN["/connectors"]
+    DashG --> AN["/analytics"]
+    DashG --> H["/habits"]
+    DashG --> N["/notifications"]
+    DashG --> S["/settings"]
+```
+
+Route groups `(auth)` and `(dashboard)` carry separate layouts — the auth group renders a bare full-bleed shell, the dashboard group renders sidebar, header, bottom dock, and notification panel.
+
+### State ownership
+
+The single rule that keeps state predictable:
+
+| State kind | Owner | Example |
+|---|---|---|
+| **Server state** | TanStack Query | Documents, tasks, events, chat history |
+| **Client UI state** | Zustand | Sidebar collapsed, active panel, upload queue, command palette |
+| **Form state** | React Hook Form + Zod | Every form in the app |
+| **URL state** | App Router params | Filters, selected record, pagination |
+| **Theme** | next-themes | Light / dark preference |
+
+Zustand never caches server data. TanStack Query never holds UI state. Provider composition lives in [`apps/web/providers/index.tsx`](apps/web/providers/index.tsx).
+
+## Backend Architecture
+
+**Target.** Bounded contexts, one package each, three layers per context.
+
+```mermaid
+flowchart TB
+    subgraph Go["services/api · Go + Fiber"]
+        direction TB
+        H[handler/ — Fiber routes + DTOs]
+        SV[service/ — business rules + state machines]
+        RP[repository/ — Postgres + S3 access]
+        H --> SV --> RP
+    end
+
+    subgraph Ctx["Bounded contexts"]
+        direction LR
+        Doc[document] ~~~ Sea[search] ~~~ Cha[chat]
+        Kno[knowledge] ~~~ Aut[automation] ~~~ Ana[analytics]
+        Aut2[auth] ~~~ Plat[platform]
+    end
+```
+
+| Context | Owns |
+|---|---|
+| `document` | Upload, lifecycle state machine, metadata, soft delete |
+| `search` | Query orchestration, filters, result assembly |
+| `chat` | Session management, SSE fan-out, proxies the AI service |
+| `knowledge` | Knowledge bases, membership, ACL source of truth |
+| `automation` | Workflow rules, job status and history |
+| `analytics` | Usage, search analytics, audit exports |
+| `auth` | JWT issuance and verification, RBAC middleware |
+| `platform` | Shared infrastructure — db, redis, s3, events, telemetry |
+
+The Python AI service mirrors this with `ingestion`, `retrieval`, `generation`, `agents`, `security`, `prompts`, and `db` modules. Full trees are in [§14 of the blueprint](docs/intelligence-hub-blueprint.md).
+
+## Data Architecture
+
+**Target.** UUIDv7 primary keys, `org_id` on every table, RLS enabled as defense-in-depth behind app-layer filters.
+
+```mermaid
+erDiagram
+    KNOWLEDGE_BASES ||--o{ DOCUMENTS : contains
+    DOCUMENTS ||--o{ DOCUMENT_CHUNKS : "split into"
+    DOCUMENT_CHUNKS ||--o| CHUNK_EMBEDDINGS : "children embedded as"
+    DOCUMENT_CHUNKS ||--o{ DOCUMENT_CHUNKS : "parent of"
+    DOCUMENTS ||--o{ DOCUMENT_ENTITIES : mentions
+    ENTITIES ||--o{ DOCUMENT_ENTITIES : "resolved from"
+    ENTITIES ||--o{ ENTITY_RELATIONS : "subject of"
+    AI_SESSIONS ||--o{ AI_MESSAGES : contains
+    AI_MESSAGES ||--o{ CITATIONS : cites
+    DOCUMENT_CHUNKS ||--o{ CITATIONS : "cited by"
+    DOCUMENTS ||--o{ AUTOMATION_JOBS : triggers
+```
+
+| Concern | Design |
+|---|---|
+| **Tenancy** | `org_id` on every row; Postgres RLS; ACL applied as vector-query pre-filters, never post-filters |
+| **Vectors** | `halfvec(1536)` — `text-embedding-3-large` Matryoshka-truncated; HNSW `m=16, ef_construction=64` |
+| **Chunking** | Parent-child — 400-token children embedded for retrieval, 1,600-token parents stored for generation context |
+| **Full text** | Generated `tsvector` column + GIN index for the BM25 half of hybrid search |
+| **Versioning** | `embedding_model` + `embedding_version` columns; re-index writes v(n+1) alongside v(n), then atomic switch |
+| **Audit** | Append-only, monthly partitions, two-year retention, SIEM-exportable |
+
+## Deployment Architecture
+
+**Target.**
+
+```mermaid
+flowchart TB
+    subgraph Edge
+        CF[CloudFront] --> WAF[WAF] --> ALB[ALB]
+    end
+    subgraph VPC["VPC · private subnets"]
+        ALB --> ECS1[ECS: Go API]
+        ECS1 --> ECS2[ECS: AI Service]
+        ECS3[ECS: Workers<br/>autoscale on stream depth]
+        ECS1 & ECS2 & ECS3 --> RDS[(RDS Postgres 17<br/>pgvector · Multi-AZ)]
+        ECS1 & ECS3 --> EC[(ElastiCache Redis)]
+        ECS3 --> CLAM[ClamAV sidecar]
+    end
+    S3Q[(S3 Quarantine)]
+    S3C[(S3 Clean)]
+    ECS3 --> S3Q & S3C
+    ECS2 -->|NAT egress| LLMAPI[Claude API]
+    SM[Secrets Manager] -.-> ECS1 & ECS2 & ECS3
+    ECS1 & ECS2 & ECS3 -.-> OTL[OTel Collector] --> GC[Grafana Cloud]
+```
+
+| Concern | MVP | Enterprise |
+|---|---|---|
+| Compute | ECS Fargate, three services | EKS + GPU node pool for reranker and OCR |
+| Database | RDS PG17 Multi-AZ with pgvector | Read replica for vector load, or Qdrant cluster |
+| Queue | Redis Streams on ElastiCache | Same, plus SQS dead-letter mirror |
+| Observability | OpenTelemetry → Grafana Cloud | Per-org SLO dashboards |
+| Disaster recovery | RDS snapshots, S3 versioning | Cross-region warm standby |
+
+---
+
+# Workflows
+
+## Request Lifecycle
+
+**Target.** How a read and a write differ.
 
 ```mermaid
 sequenceDiagram
     autonumber
     actor U as User
-    participant W as Web (Next.js)
-    participant A as API (Go)
-    participant N as AI (Python)
-    participant V as pgvector
+    participant W as Web · Next.js
+    participant Q as TanStack Query
+    participant A as API · Go
+    participant R as Redis
     participant D as Postgres
-    participant M as MCP Servers
 
-    U->>W: Prompts Nova
-    W->>A: POST /api/ai/query (JWT)
-    A->>A: Validate + rate-limit
-    A->>N: Forward query + user scope
-    N->>V: Embed & retrieve context
-    V-->>N: Top-k documents
-    N->>D: Fetch structured CRM data
-    D-->>N: Deal / contact records
-    N->>M: (optional) invoke MCP tools
-    M-->>N: Tool results
-    N-->>A: Stream tokens + citations
-    A-->>W: SSE stream
-    W-->>U: Renders live response
+    Note over U,D: Read path
+    U->>W: Navigates to /tasks
+    W->>Q: useQuery(["tasks", filters])
+    Q-->>W: Cached data, instant paint
+    Q->>A: GET /api/v1/tasks (JWT)
+    A->>A: Verify JWT, apply RBAC + rate limit
+    A->>R: Check cache
+    alt Cache hit
+        R-->>A: Cached payload
+    else Cache miss
+        A->>D: SELECT scoped by org_id
+        D-->>A: Rows
+        A->>R: Populate cache
+    end
+    A-->>Q: 200 JSON
+    Q-->>W: Revalidated data
+
+    Note over U,D: Write path
+    U->>W: Completes a task
+    W->>Q: useMutation
+    Q-->>W: Optimistic update, UI moves immediately
+    Q->>A: PATCH /api/v1/tasks/{id}
+    A->>D: UPDATE + audit_logs INSERT
+    alt Success
+        D-->>A: Committed
+        A-->>Q: 200
+        Q->>Q: Invalidate ["tasks"]
+    else Failure
+        A-->>Q: 4xx / 5xx
+        Q-->>W: Roll back optimistic update, toast error
+    end
 ```
 
-### Data Flow Summary
+## Authentication Flow
 
-1. **Interaction** — user triggers an action (search, prompt, workflow) in the Next.js client
-2. **Auth & routing** — Go API validates JWT, applies rate limits, routes to the correct service
-3. **Retrieval** — for AI queries, the Python service pulls relevant embeddings from pgvector and structured rows from Postgres
-4. **Reasoning** — LangGraph orchestrates the LLM call, optionally invoking MCP tools (Slack, GitHub, Linear, Notion…)
-5. **Streaming** — tokens stream back over SSE, rendered progressively in the UI
-6. **Persistence** — mutations write to Postgres; async tasks queue via Redis
+**Target.** Credentials and OAuth converge on the same JWT.
+
+```mermaid
+sequenceDiagram
+    autonumber
+    actor U as User
+    participant W as Web
+    participant A as API · Go
+    participant P as OAuth Provider
+    participant D as Postgres
+
+    alt Email + password
+        U->>W: Submits /register or /login
+        W->>W: Zod validation, client-side
+        W->>A: POST /api/v1/auth/{register,login}
+        A->>D: Verify or create user, argon2id hash
+    else OAuth
+        U->>W: Continue with Google
+        W->>P: Authorization redirect
+        P-->>W: Callback with code
+        W->>A: POST /api/v1/auth/oauth/callback
+        A->>P: Exchange code for profile
+        A->>D: Upsert user, link identity
+    end
+
+    D-->>A: User + org + role
+    A-->>W: Access token (15 min) + refresh cookie (HttpOnly, 30 d)
+    W-->>U: Redirect to /dashboard
+
+    Note over W,A: On 401, the client silently refreshes once and replays the request
+```
+
+| Property | Decision |
+|---|---|
+| Access token | JWT, 15 min, carries `user_id`, `org_id`, `role` |
+| Refresh token | HttpOnly + Secure + SameSite cookie, 30 d, rotated on use |
+| Password hashing | argon2id |
+| Authorization | Middleware guards routes; ACL re-applied at the query layer |
+| Roles | `org_admin`, `kb_admin`, `member`, `viewer` |
+
+## Document Ingestion Pipeline
+
+The lifecycle state machine — identical in the shipped simulation and the target system:
+
+```mermaid
+stateDiagram-v2
+    [*] --> uploaded
+    uploaded --> scanning
+    scanning --> quarantined: malware or MIME mismatch
+    scanning --> processing
+    processing --> indexed
+    processing --> failed: extraction error
+    quarantined --> [*]
+    failed --> [*]
+    indexed --> [*]
+```
+
+**Current.** What [`features/intelligence/services/ingest.ts`](apps/web/features/intelligence/services/ingest.ts) actually does in the browser today:
+
+```mermaid
+flowchart LR
+    A[File dropped] --> B[Infer doc type<br/>from filename]
+    B --> C[Extract text<br/>text/md/csv/json · docx via mammoth]
+    C --> D[Parent-child chunking<br/>600-char children, 3 per parent]
+    D --> E[Regex analysis<br/>emails · amounts · dates · phones]
+    E --> F[Risk score + tags + summary]
+    F --> G[status: indexed]
+    C -.->|binary or unsupported| H[Simulated chunk set]
+    H --> F
+```
+
+Status transitions are staged at 0.9 s, 2.3 s, and 4.6 s to mirror real pipeline latency. Chunking is genuine — paragraphs accumulate to a 600-character target, three children group into each parent, page numbers derive from a 1,800-chars-per-page model, and section paths come from the first six words of a chunk. Entity extraction is real regex over the extracted text. Nothing leaves the browser.
+
+**Target.** The server-side pipeline that replaces it:
+
+```mermaid
+flowchart LR
+    U[Presigned upload] --> V[Validation<br/>magic bytes · ClamAV · dedupe]
+    V --> O[OCR<br/>Textract, scanned only]
+    O --> P[Parsing<br/>Docling, layout-aware]
+    P --> C[Cleaning<br/>boilerplate · unicode · language]
+    C --> K[Chunking<br/>parent-child]
+    K --> E[Embedding<br/>batched, content-hash cached]
+    E --> M[Metadata attach]
+    M --> S[(Vector storage<br/>pgvector)]
+```
+
+| Stage | Failure behavior |
+|---|---|
+| Validation | `quarantined`, admin alert, never parsed |
+| OCR | Retry ×3, then `failed` |
+| Parsing | Fall back to plain-text extractor |
+| Cleaning | Log and continue |
+| Embedding | Backoff retry, partial resume |
+| Vector storage | Transactional with chunk rows |
+
+Ingestion is fully async — the API returns `202` with a `document_id` and streams status transitions to the UI over SSE.
+
+## RAG Answer Flow
+
+**Target.** Hybrid retrieval with reranking and page-level citations.
+
+```mermaid
+flowchart LR
+    Q[User question] --> QC{Query classifier<br/>Haiku}
+    QC -->|vague| MQ[Multi-query ×3]
+    QC -->|specific| SQ[Single query]
+    MQ & SQ --> D[Dense search<br/>HNSW top-40]
+    MQ & SQ --> S[Sparse BM25<br/>top-40]
+    D & S --> RRF[RRF fusion<br/>top-50]
+    RRF --> RR[Cross-encoder rerank<br/>top-8]
+    RR --> PD[Parent swap + dedupe]
+    PD --> CB[Context builder<br/>12k token budget]
+    CB --> LLM[Claude · grounded prompt]
+    LLM --> ANS[Stream tokens + citations]
+```
+
+The retrieved child chunk is what matched; the parent chunk is what the model reads. Every citation carries `document_id`, `page`, `section_path`, and the exact quote span, so a footnote opens the viewer at the right page.
+
+ACL is applied as a **pre-filter inside the vector query**, never as a post-filter — post-filtering leaks cross-tenant existence through result counts.
+
+## Automation Pipeline
+
+**Target.** Event-driven fan-out after a document is indexed.
+
+```mermaid
+flowchart TB
+    E[event: document.indexed] --> F1[Extract metadata]
+    E --> F2[Generate summary]
+    E --> F3[Extract entities]
+    F3 --> F4[Generate tags]
+    F3 --> F5[Detect deadlines]
+    F3 --> F6[Detect vendors]
+    F5 --> A1[Create reminders<br/>CRM tasks]
+    F6 --> A2[Link vendor records]
+    F1 & F2 & F4 --> A3[Update search index]
+    A1 & A2 & A3 --> N[Notify users]
+    N --> W[Evaluate org workflow rules]
+```
+
+| Property | Design |
+|---|---|
+| Idempotency | Job key is `(document_id, job_type, doc_checksum)` — re-runs are no-ops |
+| Retries | Exponential backoff ×5, then dead-letter stream and admin dashboard |
+| Ordering | Fan-out on `document.indexed`; entity-dependent jobs chained behind extraction |
+| Cost control | Enrichment runs on Haiku; per-org daily token budget with soft-stop |
+
+## Development Workflow
+
+**Current.** The loop you run today.
+
+```mermaid
+flowchart LR
+    A[git pull] --> B[npm install]
+    B --> C[npm run dev]
+    C --> D[Edit slice]
+    D --> E[Hot reload<br/>localhost:3000]
+    E --> D
+    D --> F[npm run lint]
+    F --> G[npm run build]
+    G --> H[Commit + PR]
+```
+
+| Command | What it does |
+|---|---|
+| `npm run dev` | Next.js dev server on port 3000 |
+| `npm run build` | Production build of the web app |
+| `npm run lint` | ESLint across the web workspace |
+| `npm run dev --workspace=apps/web` | Run only the web workspace |
+| `docker compose --profile phase-2 -f infrastructure/docker-compose.yml up -d` | Start Postgres + Redis |
+| `docker compose --profile phase-2 -f infrastructure/docker-compose.yml down` | Stop infrastructure |
+
+All three root scripts delegate to `apps/web` — the monorepo has a single runnable workspace until the Go API lands.
+
+## Adding a Feature Slice
+
+The repeatable procedure. Follow it and the dependency rules hold automatically.
+
+```mermaid
+flowchart TB
+    S1[1 · Scaffold features/name/] --> S2[2 · Define types.ts]
+    S2 --> S3[3 · Write Zod schemas]
+    S3 --> S4[4 · Add mock data in constants/]
+    S4 --> S5[5 · Build components/]
+    S5 --> S6[6 · Add Zustand store if UI state is needed]
+    S6 --> S7[7 · Export public API in index.ts]
+    S7 --> S8[8 · Add route under app/dashboard/]
+    S8 --> S9[9 · Register in shared/constants/navigation.ts]
+    S9 --> S10[10 · Swap mocks for services/ in Phase 2]
+```
+
+1. **Scaffold** the directory with the [standard slice shape](#feature-slice-anatomy). Create only the folders you need.
+2. **Define `types.ts`** first — the domain vocabulary drives everything downstream.
+3. **Write Zod schemas** in `schemas/`. These become the runtime contract against the API later.
+4. **Add mock data** in `constants/`. Shape it exactly like the eventual API response so the swap is mechanical.
+5. **Build components** in `components/`. Compose from `shared/components/ui` — do not write new primitives inside a slice.
+6. **Add a Zustand store** in `store/` only for client-only UI state. Server data does not belong here.
+7. **Export the public API** in `index.ts`. Everything not exported here is private to the slice.
+8. **Add the route** as `app/(dashboard)/<name>/page.tsx`, importing only from the slice's `index.ts`.
+9. **Register navigation** in [`shared/constants/navigation.ts`](apps/web/shared/constants/navigation.ts) — `mainNavItems` for primary destinations, `secondaryNavItems` for utility pages.
+10. **Phase 2** — replace `constants/` with typed clients in `services/`, wire TanStack Query, delete the mocks.
+
+## Git & Release Workflow
+
+```mermaid
+gitGraph
+    commit id: "main"
+    branch feature/intelligence-hub
+    commit id: "feat: dropzone"
+    commit id: "feat: chunking"
+    commit id: "fix: status timing"
+    checkout main
+    merge feature/intelligence-hub tag: "PR review"
+    commit id: "docs: README"
+```
+
+| Step | Convention |
+|---|---|
+| **Branch** | `feature/<slug>` or `fix/<slug>` off `main` |
+| **Commit** | Conventional Commits — `feat:`, `fix:`, `chore:`, `docs:`, `refactor:` |
+| **Scope** | One feature per PR |
+| **Evidence** | UI changes require before/after screenshots in the PR body |
+| **Gate** | `npm run lint` and `npm run build` must pass before review |
+| **Merge** | Squash into `main` after approval |
 
 ---
 
@@ -317,23 +843,25 @@ orion/
 ├── apps/
 │   └── web/                       # Next.js 16 + React 19 client
 │       ├── app/                   # App Router
-│       │   ├── (auth)/            # Login / register routes
-│       │   └── (dashboard)/       # Authenticated shell
-│       ├── features/              # Feature-Sliced Design
-│       │   ├── ai/                # Nova assistant + connectors
+│       │   ├── (auth)/            # Login / register — bare shell
+│       │   └── (dashboard)/       # 11 routes — sidebar + header shell
+│       ├── features/              # Feature-Sliced Design — 12 slices
+│       │   ├── ai/                # Nova assistant
 │       │   ├── analytics/
 │       │   ├── auth/
 │       │   ├── calendar/
 │       │   ├── dashboard/
 │       │   ├── emails/
 │       │   ├── habits/
-│       │   ├── mcp/               # MCP server catalog
+│       │   ├── intelligence/      # Document intelligence + RAG hub
+│       │   ├── mcp/               # MCP connector catalog
 │       │   ├── notifications/
 │       │   ├── settings/
 │       │   └── tasks/
-│       ├── shared/                # UI primitives, hooks, utils, types
+│       ├── shared/                # UI primitives, layout, utils, nav
 │       ├── providers/             # Theme, query, toaster
-│       └── store/                 # Global Zustand stores
+│       ├── store/                 # Global Zustand store
+│       └── public/                # Brand assets
 │
 ├── services/
 │   └── api/                       # Go + Fiber API (Phase 2 stub)
@@ -348,6 +876,10 @@ orion/
 │   └── docker-compose.yml         # Postgres + Redis (phase-2 profile)
 │
 ├── docs/
+│   ├── ARCHITECTURE.md            # Frontend dependency rules
+│   ├── DESIGN_SYSTEM.md           # Tokens, primitives, patterns
+│   ├── AI_CONNECTORS.md           # MCP connector contracts
+│   ├── intelligence-hub-blueprint.md   # Full AI subsystem contract
 │   ├── brand/                     # Logo, banner, brand marks
 │   └── screenshots/               # UI captures used in docs
 │
@@ -481,37 +1013,7 @@ GOOGLE_CLIENT_SECRET=
 
 ---
 
-## Development Workflow
-
-| Command | What it does |
-|---|---|
-| `npm run dev` | Start Next.js dev server (port 3000) |
-| `npm run build` | Production build of the web app |
-| `npm run lint` | ESLint across the web app |
-| `npm run dev --workspace=apps/web` | Run only the web workspace |
-| `docker compose --profile phase-2 -f infrastructure/docker-compose.yml up -d` | Start Postgres + Redis |
-| `docker compose --profile phase-2 -f infrastructure/docker-compose.yml down` | Stop infrastructure |
-
-### Feature-Sliced Design
-
-Each feature under [apps/web/features/](apps/web/features/) owns its own:
-
-```
-features/tasks/
-├── components/     # React components
-├── hooks/          # Feature-scoped hooks
-├── constants/      # Static data
-├── services/       # API clients
-├── schemas/        # Zod schemas
-├── types/          # TypeScript types
-└── index.ts        # Public API of the slice
-```
-
-Cross-feature imports go through each slice's public `index.ts` — never reach into another slice's internals.
-
----
-
-## Infrastructure (Phase 2)
+## Infrastructure
 
 `infrastructure/docker-compose.yml` provisions the Phase 2 data services under the `phase-2` profile:
 
