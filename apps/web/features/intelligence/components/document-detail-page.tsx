@@ -149,7 +149,7 @@ export function DocumentDetailPage({ id }: { id: string }) {
                 `/intelligence?tab=ask&seed=${encodeURIComponent(`Summarize the key risks and deadlines in "${doc.name}"`)}`
               )
             }
-            className="flex h-9 items-center gap-1.5 rounded-xl bg-gradient-to-r from-indigo-500 to-violet-500 px-3.5 text-xs font-semibold text-white shadow-glow transition-opacity hover:opacity-90 disabled:opacity-40"
+            className="flex h-9 items-center gap-1.5 rounded-xl bg-gradient-to-r from-blue-600 to-sky-500 px-3.5 text-xs font-semibold text-white shadow-glow transition-opacity hover:opacity-90 disabled:opacity-40"
           >
             <Sparkles className="h-3.5 w-3.5" />
             Ask about this doc

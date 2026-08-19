@@ -145,11 +145,14 @@ export interface PipelineStage {
 }
 
 export const pipelineStages: PipelineStage[] = [
-  { id: "p1", label: "Lead", count: 1240, width: 100, from: "#2b7fd4", to: "#3ba4e8" },
-  { id: "p2", label: "Qualified", count: 820, width: 90, from: "#1f9ec4", to: "#2fc7c2" },
-  { id: "p3", label: "Proposal", count: 320, width: 80, from: "#8f9d3c", to: "#c9c04a" },
-  { id: "p4", label: "Negotiation", count: 120, width: 70, from: "#d08a2c", to: "#e8a93c" },
-  { id: "p5", label: "Closed Won", count: 89, width: 60, from: "#1f9d55", to: "#35c46e" },
+  // One ramp, deep blue at the top of the funnel through to the brand teal on
+  // Closed Won. Five unrelated hues read as a chart legend, not a funnel: the
+  // single ramp makes stage order legible at a glance.
+  { id: "p1", label: "Lead", count: 1240, width: 100, from: "#1e4795", to: "#2a68c6" },
+  { id: "p2", label: "Qualified", count: 820, width: 90, from: "#1c5cb4", to: "#2a8bd8" },
+  { id: "p3", label: "Proposal", count: 320, width: 80, from: "#1a75c2", to: "#28aacd" },
+  { id: "p4", label: "Negotiation", count: 120, width: 70, from: "#178fbe", to: "#28c9bd" },
+  { id: "p5", label: "Closed Won", count: 89, width: 60, from: "#15a58e", to: "#2ee6c5" },
 ];
 
 export const aiSuggestions = [

@@ -24,6 +24,14 @@ export function CommandPalette() {
 
   useEffect(() => {
     const down = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        const state = useAppStore.getState();
+        if (state.commandPaletteOpen) {
+          e.preventDefault();
+          state.setCommandPaletteOpen(false);
+        }
+        return;
+      }
       if ((e.key.toLowerCase() === "k" || e.code === "KeyK") && (e.metaKey || e.ctrlKey)) {
         e.preventDefault();
         const state = useAppStore.getState();

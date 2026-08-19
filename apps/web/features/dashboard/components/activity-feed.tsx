@@ -1,5 +1,6 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { recentActivity } from "../constants/crm-data";
 
 const TONES: Record<string, string> = {
@@ -11,12 +12,16 @@ const TONES: Record<string, string> = {
 };
 
 export function ActivityFeed() {
+  const router = useRouter();
+
   return (
     <section className="orion-panel flex flex-col p-3">
       <header className="flex items-center justify-between gap-3">
         <h2 className="text-[13px] font-semibold text-foreground">Recent Activity</h2>
         <button
           type="button"
+          onClick={() => router.push("/notifications")}
+          aria-label="View all activity"
           className="text-[10px] text-primary transition hover:text-primary/80"
         >
           View all

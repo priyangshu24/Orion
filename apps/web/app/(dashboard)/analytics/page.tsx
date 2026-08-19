@@ -52,7 +52,7 @@ export default function AnalyticsPage() {
               {weekly.map((value, index) => (
                 <div key={index} className="flex flex-1 flex-col items-center gap-2">
                   <div
-                    className="w-full rounded-t-xl bg-gradient-to-t from-primary/60 to-primary shadow-glow transition-all hover:from-primary hover:to-violet-400"
+                    className="w-full rounded-t-xl bg-gradient-to-t from-primary/60 to-primary shadow-glow transition-all hover:from-primary hover:to-sky-400"
                     style={{ height: `${value}%` }}
                   />
                   <span className="text-[10px] text-muted-foreground">{["M", "T", "W", "T", "F", "S", "S"][index]}</span>

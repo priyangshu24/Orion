@@ -1,16 +1,23 @@
 "use client";
 
 import { useState, type FormEvent } from "react";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 import { Bot, SendHorizontal } from "lucide-react";
 import { aiSuggestions } from "../constants/crm-data";
 
 export function AiAskPanel() {
+  const router = useRouter();
   const [value, setValue] = useState("");
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    // Wired to the AI service in Phase 5; the input is live so the layout and
-    // focus behaviour can be reviewed now.
+    const prompt = value.trim();
+    if (!prompt) {
+      toast.error("Enter a question for Orion AI");
+      return;
+    }
+    router.push(`/ai?prompt=${encodeURIComponent(prompt)}`);
     setValue("");
   }
 
@@ -42,7 +49,8 @@ export function AiAskPanel() {
           <button
             type="submit"
             aria-label="Send"
-            className="grid h-6 w-6 shrink-0 place-items-center rounded-md text-primary transition hover:bg-primary/12"
+            disabled={!value.trim()}
+            className="grid h-6 w-6 shrink-0 place-items-center rounded-md text-primary transition hover:bg-primary/12 disabled:cursor-not-allowed disabled:opacity-40"
           >
             <SendHorizontal className="h-4 w-4" />
           </button>

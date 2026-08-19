@@ -88,7 +88,7 @@ export function AskPanel({ seed }: { seed?: string }) {
     <div className="neon-panel flex h-[560px] flex-col overflow-hidden rounded-3xl">
       {/* Header */}
       <div className="flex items-center gap-2.5 border-b border-foreground/10 px-5 py-3.5">
-        <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-500 to-violet-500 text-white shadow-glow">
+        <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-gradient-to-br from-blue-600 to-sky-500 text-white shadow-glow">
           <Sparkles className="h-4 w-4" />
         </span>
         <div>
@@ -125,7 +125,7 @@ export function AskPanel({ seed }: { seed?: string }) {
             {messages.map((msg) =>
               msg.role === "user" ? (
                 <div key={msg.id} className="flex justify-end">
-                  <p className="max-w-[80%] rounded-2xl rounded-br-md bg-gradient-to-r from-indigo-500 to-violet-500 px-4 py-2.5 text-sm text-white shadow-glow">
+                  <p className="max-w-[80%] rounded-2xl rounded-br-md bg-gradient-to-r from-blue-600 to-sky-500 px-4 py-2.5 text-sm text-white shadow-glow">
                     {msg.content}
                   </p>
                 </div>
@@ -186,7 +186,7 @@ export function AskPanel({ seed }: { seed?: string }) {
           type="submit"
           disabled={busy || !input.trim()}
           aria-label="Send"
-          className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-gradient-to-r from-indigo-500 to-violet-500 text-white shadow-glow transition-opacity hover:opacity-90 disabled:opacity-40"
+          className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-gradient-to-r from-blue-600 to-sky-500 text-white shadow-glow transition-opacity hover:opacity-90 disabled:opacity-40"
         >
           {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
         </button>

@@ -25,7 +25,7 @@ export function OrionLogo({
     return (
       <div
         className={cn(
-          "relative grid h-10 w-10 place-items-center overflow-hidden rounded-xl border border-primary/25 bg-[#020c0c]",
+          "relative grid h-10 w-10 place-items-center overflow-hidden rounded-xl border border-primary/25 bg-[#070d1a]",
           markClassName
         )}
       >

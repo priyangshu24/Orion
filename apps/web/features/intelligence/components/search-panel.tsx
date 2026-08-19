@@ -91,7 +91,7 @@ export function SearchPanel() {
         <button
           type="submit"
           disabled={searching}
-          className="absolute right-1.5 top-1/2 flex h-9 -translate-y-1/2 items-center gap-1.5 rounded-full bg-gradient-to-r from-indigo-500 to-violet-500 shadow-glow px-4 text-xs font-semibold text-white transition-opacity hover:opacity-90 disabled:opacity-60"
+          className="absolute right-1.5 top-1/2 flex h-9 -translate-y-1/2 items-center gap-1.5 rounded-full bg-gradient-to-r from-blue-600 to-sky-500 shadow-glow px-4 text-xs font-semibold text-white transition-opacity hover:opacity-90 disabled:opacity-60"
         >
           {searching ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Search className="h-3.5 w-3.5" />}
           Search

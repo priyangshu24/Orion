@@ -124,7 +124,7 @@ export function DocumentsPanel() {
             e.target.value = "";
           }}
         />
-        <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br from-indigo-500 to-violet-500 text-white shadow-glow">
+        <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br from-blue-600 to-sky-500 text-white shadow-glow">
           <UploadCloud className="h-5 w-5" />
         </span>
         <p className="text-sm font-medium">

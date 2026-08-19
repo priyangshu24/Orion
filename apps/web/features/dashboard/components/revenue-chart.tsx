@@ -8,13 +8,24 @@ import { revenueSeries } from "../constants/crm-data";
 const W = 720;
 const H = 200;
 const Y_TICKS = [30000, 20000, 10000, 0];
+const ranges = [
+  { id: "7d", label: "Last 7 Days" },
+  { id: "month", label: "This Month" },
+] as const;
+type RevenueRange = (typeof ranges)[number]["id"];
 
 export function RevenueChart() {
   const gid = useId().replace(/:/g, "");
-  const [active, setActive] = useState<number | null>(revenueSeries.length - 1);
+  const [range, setRange] = useState<RevenueRange>("month");
+  const [menuOpen, setMenuOpen] = useState(false);
+  const visibleSeries = useMemo(
+    () => (range === "7d" ? revenueSeries.slice(-7) : revenueSeries),
+    [range]
+  );
+  const [active, setActive] = useState<number | null>(visibleSeries.length - 1);
 
   const { points, line, area } = useMemo(() => {
-    const values = revenueSeries.map((d) => d.value);
+    const values = visibleSeries.map((d) => d.value);
     // Anchor the scale to 0 so bar heights read proportionally, and to the top
     // tick so the series never collides with the gridline labels.
     const scaled = [...values, 0, 30000];
@@ -22,22 +33,54 @@ export function RevenueChart() {
     const pts = all.slice(0, values.length);
     const l = smoothLine(pts);
     return { points: pts, line: l, area: closeArea(l, pts, H) };
-  }, []);
+  }, [visibleSeries]);
 
   const activePoint = active === null ? null : points[active];
-  const activeDatum = active === null ? null : revenueSeries[active];
+  const activeDatum = active === null ? null : visibleSeries[active];
+  const rangeLabel = ranges.find((item) => item.id === range)?.label ?? "This Month";
+  const labelIndices = Array.from(
+    new Set([0, Math.round((visibleSeries.length - 1) / 2), visibleSeries.length - 1])
+  );
+
+  function selectRange(nextRange: RevenueRange) {
+    const nextLength = nextRange === "7d" ? 7 : revenueSeries.length;
+    setRange(nextRange);
+    setActive(nextLength - 1);
+    setMenuOpen(false);
+  }
 
   return (
     <section className="orion-panel flex flex-col p-3">
       <header className="flex items-start justify-between gap-3">
         <h2 className="text-[13px] font-semibold text-foreground">Revenue Overview</h2>
-        <button
-          type="button"
-          className="orion-glass-control flex items-center gap-1.5 rounded-lg px-2 py-1 text-[10px] text-muted-foreground transition hover:bg-foreground/[0.08] hover:text-foreground"
-        >
-          This Month
-          <ChevronDown className="h-3.5 w-3.5" />
-        </button>
+        <div className="relative">
+          <button
+            type="button"
+            onClick={() => setMenuOpen((open) => !open)}
+            aria-expanded={menuOpen}
+            aria-haspopup="menu"
+            className="orion-glass-control flex items-center gap-1.5 rounded-lg px-2 py-1 text-[10px] text-muted-foreground transition hover:bg-foreground/[0.08] hover:text-foreground"
+          >
+            {rangeLabel}
+            <ChevronDown className={`h-3.5 w-3.5 transition-transform ${menuOpen ? "rotate-180" : ""}`} />
+          </button>
+          {menuOpen ? (
+            <div role="menu" className="absolute right-0 top-full z-20 mt-1.5 min-w-32 rounded-lg border border-border bg-popover/95 p-1 shadow-floating backdrop-blur-xl">
+              {ranges.map((item) => (
+                <button
+                  key={item.id}
+                  type="button"
+                  role="menuitemradio"
+                  aria-checked={range === item.id}
+                  onClick={() => selectRange(item.id)}
+                  className="block w-full rounded-md px-2.5 py-1.5 text-left text-[10px] text-muted-foreground transition hover:bg-primary/10 hover:text-foreground aria-checked:text-primary"
+                >
+                  {item.label}
+                </button>
+              ))}
+            </div>
+          ) : null}
+        </div>
       </header>
 
       <p className="mt-2 text-[21px] font-semibold leading-none tracking-tight text-foreground">
@@ -46,7 +89,7 @@ export function RevenueChart() {
       <p className="mt-1.5 flex items-center gap-1 text-[10px]">
         <ArrowUp className="h-3.5 w-3.5 text-success" />
         <span className="text-success">12.5%</span>
-        <span className="text-muted-foreground">vs last month</span>
+        <span className="text-muted-foreground">{range === "7d" ? "vs prior 7 days" : "vs last month"}</span>
       </p>
 
       <div className="relative mt-2.5 flex-1">
@@ -64,7 +107,7 @@ export function RevenueChart() {
             className="h-[118px] w-full"
             role="img"
             aria-label="Revenue over the last 20 days, trending up 12.5 percent"
-            onMouseLeave={() => setActive(revenueSeries.length - 1)}
+            onMouseLeave={() => setActive(visibleSeries.length - 1)}
           >
             <defs>
               <linearGradient id={`rev-${gid}`} x1="0" y1="0" x2="0" y2="1">
@@ -83,7 +126,7 @@ export function RevenueChart() {
                   x2={W}
                   y1={y}
                   y2={y}
-                  stroke="rgba(129,224,216,0.10)"
+                  stroke="rgba(126,162,238,0.11)"
                   strokeWidth="1"
                   vectorEffect="non-scaling-stroke"
                 />
@@ -118,7 +161,7 @@ export function RevenueChart() {
                   cy={activePoint.y}
                   r="4.5"
                   fill="#2ee6c5"
-                  stroke="#04100f"
+                  stroke="#0a1020"
                   strokeWidth="2"
                   vectorEffect="non-scaling-stroke"
                 />
@@ -157,8 +200,8 @@ export function RevenueChart() {
           )}
 
           <div className="mt-2 flex justify-between text-[10px] text-muted-foreground">
-            {[0, 5, 10, 15, 19].map((i) => (
-              <span key={i}>{revenueSeries[i].label}</span>
+            {labelIndices.map((i) => (
+              <span key={i}>{visibleSeries[i].label}</span>
             ))}
           </div>
         </div>

@@ -19,7 +19,7 @@ export function DashboardShell({
 
       <div className="orion-dashboard-stage relative flex min-w-0 flex-1 flex-col overflow-hidden">
         <Header />
-        <main className="orion-dashboard-main min-h-0 flex-1 overflow-y-auto overflow-x-hidden px-3 pb-3 pt-3 sm:px-4">
+        <main className="orion-dashboard-main min-h-0 flex-1 overflow-y-auto overflow-x-hidden px-3 pb-3 pt-[72px] sm:px-4">
           {children}
         </main>
       </div>

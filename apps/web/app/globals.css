@@ -1,38 +1,38 @@
 @import "tailwindcss";
 
 @theme {
-  /* Colors — Orion deep-space teal. Matches the brand mark (teal + gold)
-     and the auth screen, which were already on this palette. */
-  --color-background: #05100f;
-  --color-foreground: #f2f7f6;
-  --color-card: rgba(10, 24, 24, 0.58);
-  --color-card-foreground: #f2f7f6;
-  --color-popover: #081616;
-  --color-popover-foreground: #f2f7f6;
-  --color-primary: #2ee6c5;
-  --color-primary-foreground: #01201c;
-  --color-secondary: rgba(24, 56, 56, 0.42);
-  --color-secondary-foreground: #a6bcbb;
-  --color-muted: rgba(18, 42, 42, 0.58);
-  --color-muted-foreground: #8ba3a2;
-  --color-accent: #35e5e8;
-  --color-accent-foreground: #01201c;
+  /* Colors — near-black cockpit surfaces with teal signal accents, matching
+     the Orion CRM reference while keeping gold reserved for highlights. */
+  --color-background: #02090b;
+  --color-foreground: #edf5f3;
+  --color-card: rgba(7, 18, 20, 0.92);
+  --color-card-foreground: #edf5f3;
+  --color-popover: #071214;
+  --color-popover-foreground: #edf5f3;
+  --color-primary: #19d7c0;
+  --color-primary-foreground: #001b18;
+  --color-secondary: rgba(16, 42, 43, 0.58);
+  --color-secondary-foreground: #a9bfbb;
+  --color-muted: rgba(12, 30, 32, 0.7);
+  --color-muted-foreground: #819994;
+  --color-accent: #19d7c0;
+  --color-accent-foreground: #001b18;
   --color-destructive: #ef4444;
   --color-destructive-foreground: #ffffff;
   --color-success: #22c55e;
   --color-warning: #efb34f;
-  --color-info: #38bdf8;
-  --color-border: rgba(129, 224, 216, 0.16);
-  --color-input: rgba(129, 224, 216, 0.16);
-  --color-ring: #2ee6c5;
-  --color-sidebar: rgba(8, 20, 20, 0.72);
-  --color-sidebar-foreground: #93aead;
-  --color-sidebar-border: rgba(129, 224, 216, 0.12);
-  --color-glass: rgba(9, 22, 22, 0.55);
-  --color-glass-border: rgba(140, 232, 224, 0.20);
-  --color-glass-hover: rgba(46, 230, 197, 0.14);
-  --color-surface-raised: #0b1a1a;
-  --color-surface-overlay: rgba(0, 0, 0, 0.8);
+  --color-info: #2bb7dc;
+  --color-border: rgba(70, 132, 126, 0.17);
+  --color-input: rgba(70, 132, 126, 0.18);
+  --color-ring: #19d7c0;
+  --color-sidebar: rgba(2, 10, 12, 0.94);
+  --color-sidebar-foreground: #9aafab;
+  --color-sidebar-border: rgba(70, 132, 126, 0.13);
+  --color-glass: rgba(6, 17, 19, 0.84);
+  --color-glass-border: rgba(76, 139, 132, 0.18);
+  --color-glass-hover: rgba(25, 215, 192, 0.09);
+  --color-surface-raised: #091719;
+  --color-surface-overlay: rgba(1, 7, 9, 0.86);
 
   /* Brand gold — logo accent, used for highlights and the Upgrade card */
   --color-gold: #efb34f;
@@ -52,11 +52,11 @@
   --radius-full: 9999px;
 
   /* Shadows */
-  --shadow-glow: 0 0 26px rgba(124, 92, 255, 0.42), 0 0 70px rgba(34, 211, 238, 0.12);
-  --shadow-glow-lg: 0 0 50px rgba(124, 92, 255, 0.48), 0 0 120px rgba(37, 99, 235, 0.20);
-  --shadow-card: 0 22px 70px rgba(0, 0, 0, 0.36), 0 0 34px rgba(74, 85, 255, 0.10), inset 0 1px 0 rgba(255, 255, 255, 0.14);
-  --shadow-card-hover: 0 24px 80px rgba(0, 0, 0, 0.34), inset 0 1px 0 rgba(255, 255, 255, 0.16);
-  --shadow-floating: 0 28px 90px rgba(0, 0, 0, 0.46), 0 0 80px rgba(124, 92, 255, 0.20), inset 0 1px 0 rgba(255, 255, 255, 0.18), 0 0 1px rgba(255, 255, 255, 0.24);
+  --shadow-glow: 0 0 26px rgba(25, 215, 192, 0.2), 0 0 70px rgba(25, 215, 192, 0.06);
+  --shadow-glow-lg: 0 0 50px rgba(25, 215, 192, 0.22), 0 0 120px rgba(25, 215, 192, 0.08);
+  --shadow-card: 0 16px 38px rgba(0, 4, 5, 0.42), inset 0 1px 0 rgba(255, 255, 255, 0.035);
+  --shadow-card-hover: 0 20px 48px rgba(0, 4, 5, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.055);
+  --shadow-floating: 0 28px 80px rgba(0, 4, 5, 0.58), 0 0 0 1px rgba(70, 132, 126, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.08);
 
   /* Animations */
   --ease-spring: cubic-bezier(0.22, 1, 0.36, 1);
@@ -139,7 +139,7 @@ body {
 
 /* Selection */
 ::selection {
-  background-color: rgba(99, 102, 241, 0.3);
+  background-color: rgba(25, 215, 192, 0.28);
   color: var(--color-foreground);
 }
 
@@ -147,6 +147,29 @@ body {
 :focus-visible {
   outline: 2px solid var(--color-ring);
   outline-offset: 2px;
+}
+
+/* Search fields already have a visible glass container, so an additional
+   browser focus rectangle creates a distracting double highlight. */
+.orion-panel input[aria-label^="Search "]:focus-visible {
+  outline: none;
+  box-shadow: none;
+}
+
+/* Keep the native status menu legible on Windows, where option popovers do
+   not inherit the glass surface and otherwise fall back to a white theme. */
+select[aria-label="Contact status"] {
+  color-scheme: dark;
+}
+
+select[aria-label="Contact status"] option {
+  color: #edf5f3;
+  background-color: #071214;
+}
+
+select[aria-label="Contact status"] option:checked {
+  color: #ffffff;
+  background-color: #0f766e;
 }
 
 /* Glassmorphism utility */
@@ -172,12 +195,12 @@ body {
     border: 1px solid rgba(255, 255, 255, 0.12);
     background:
       linear-gradient(135deg, rgba(255, 255, 255, 0.10), rgba(255, 255, 255, 0.02)),
-      radial-gradient(circle at 12% 0%, rgba(99, 102, 241, 0.08), transparent 34%),
-      radial-gradient(circle at 85% 100%, rgba(34, 211, 238, 0.08), transparent 36%),
+      radial-gradient(circle at 12% 0%, rgba(25, 215, 192, 0.08), transparent 34%),
+      radial-gradient(circle at 85% 100%, rgba(18, 122, 112, 0.08), transparent 36%),
       rgba(9, 9, 15, 0.06);
     box-shadow:
       0 24px 70px rgba(0, 0, 0, 0.22),
-      0 10px 30px rgba(99, 102, 241, 0.10),
+      0 10px 30px rgba(25, 215, 192, 0.08),
       inset 0 1px 0 rgba(255, 255, 255, 0.16),
       inset 0 -1px 0 rgba(255, 255, 255, 0.05);
     backdrop-filter: blur(48px) saturate(220%);
@@ -204,7 +227,7 @@ body {
     inset: -2px;
     z-index: -2;
     border-radius: inherit;
-    background: linear-gradient(135deg, rgba(99, 102, 241, 0.24), transparent 38%, rgba(34, 211, 238, 0.18));
+    background: linear-gradient(135deg, rgba(25, 215, 192, 0.2), transparent 38%, rgba(18, 122, 112, 0.16));
     filter: blur(18px);
     opacity: 0.24;
   }
@@ -214,12 +237,12 @@ body {
   border-color: rgba(255, 255, 255, 0.50);
   background:
     linear-gradient(135deg, rgba(255, 255, 255, 0.22), rgba(255, 255, 255, 0.06)),
-    radial-gradient(circle at 12% 0%, rgba(99, 102, 241, 0.08), transparent 34%),
-    radial-gradient(circle at 88% 100%, rgba(34, 211, 238, 0.07), transparent 38%),
+    radial-gradient(circle at 12% 0%, rgba(59, 130, 246, 0.08), transparent 34%),
+    radial-gradient(circle at 88% 100%, rgba(56, 189, 248, 0.07), transparent 38%),
     rgba(255, 255, 255, 0.04);
   box-shadow:
     0 28px 80px rgba(15, 23, 42, 0.12),
-    0 8px 28px rgba(99, 102, 241, 0.08),
+    0 8px 28px rgba(59, 130, 246, 0.08),
     inset 0 1px 0 rgba(255, 255, 255, 0.48),
     inset 0 -1px 0 rgba(15, 23, 42, 0.05);
 }
@@ -238,8 +261,8 @@ body {
   border: 1px solid color-mix(in oklab, var(--color-glass-border) 78%, transparent);
   background:
     linear-gradient(135deg, rgba(255, 255, 255, 0.16), transparent 32%),
-    radial-gradient(circle at 0% 0%, rgba(99, 102, 241, 0.16), transparent 34%),
-    radial-gradient(circle at 100% 100%, rgba(34, 211, 238, 0.12), transparent 34%),
+    radial-gradient(circle at 0% 0%, rgba(25, 215, 192, 0.12), transparent 34%),
+    radial-gradient(circle at 100% 100%, rgba(18, 122, 112, 0.1), transparent 34%),
     var(--color-glass);
   box-shadow: var(--shadow-card);
   backdrop-filter: blur(28px) saturate(180%);
@@ -280,8 +303,8 @@ body {
 
 [data-theme="light"] body {
   background:
-    radial-gradient(circle at 16% 4%, rgba(99, 102, 241, 0.18), transparent 28rem),
-    radial-gradient(circle at 90% 30%, rgba(34, 211, 238, 0.16), transparent 34rem),
+    radial-gradient(circle at 16% 4%, rgba(59, 130, 246, 0.18), transparent 28rem),
+    radial-gradient(circle at 90% 30%, rgba(56, 189, 248, 0.16), transparent 34rem),
     linear-gradient(135deg, #f8f8ff 0%, #ffffff 45%, #edfaff 100%);
 }
 
@@ -289,12 +312,12 @@ body {
 [data-theme="light"] .liquid-glass {
   background:
     linear-gradient(135deg, rgba(255, 255, 255, 0.36), rgba(255, 255, 255, 0.12)),
-    radial-gradient(circle at 8% 0%, rgba(99, 102, 241, 0.18), transparent 28%),
-    radial-gradient(circle at 100% 100%, rgba(34, 211, 238, 0.14), transparent 30%);
+    radial-gradient(circle at 8% 0%, rgba(59, 130, 246, 0.18), transparent 28%),
+    radial-gradient(circle at 100% 100%, rgba(56, 189, 248, 0.14), transparent 30%);
   border-color: rgba(255, 255, 255, 0.52);
   box-shadow:
     0 26px 90px rgba(15, 23, 42, 0.18),
-    0 8px 28px rgba(99, 102, 241, 0.10),
+    0 8px 28px rgba(59, 130, 246, 0.10),
     inset 0 1px 0 rgba(255, 255, 255, 0.82),
     inset 0 -1px 0 rgba(15, 23, 42, 0.06);
 }
@@ -305,8 +328,8 @@ body {
   inset: 0;
   z-index: 0;
   background-image:
-    linear-gradient(rgba(168, 181, 255, 0.025) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(168, 181, 255, 0.025) 1px, transparent 1px);
+    linear-gradient(rgba(150, 180, 255, 0.018) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(150, 180, 255, 0.018) 1px, transparent 1px);
   background-size: 64px 64px;
   mask-image: radial-gradient(circle at 50% 28%, black, transparent 76%);
 }
@@ -314,11 +337,10 @@ body {
 /* Final polished cockpit overrides */
 body {
   background:
-    radial-gradient(circle at 16% 16%, rgba(124, 92, 255, 0.42), transparent 24rem),
-    radial-gradient(circle at 52% -10%, rgba(34, 211, 238, 0.22), transparent 30rem),
-    radial-gradient(circle at 92% 84%, rgba(37, 99, 235, 0.30), transparent 24rem),
-    radial-gradient(circle at 18% 92%, rgba(139, 92, 246, 0.36), transparent 24rem),
-    linear-gradient(135deg, #050617 0%, #07112f 38%, #15072f 100%);
+    radial-gradient(ellipse 72% 44% at 55% -14%, rgba(19, 112, 103, 0.12), transparent 72%),
+    radial-gradient(ellipse 54% 44% at 100% 6%, rgba(25, 215, 192, 0.045), transparent 72%),
+    linear-gradient(180deg, #030b0d 0%, #02090b 54%, #010608 100%);
+  background-attachment: fixed;
 }
 
 .ambient-orb {
@@ -326,8 +348,8 @@ body {
   position: fixed;
   z-index: 0;
   border-radius: 9999px;
-  filter: blur(22px);
-  opacity: 0.30;
+  filter: blur(30px);
+  opacity: 0.20;
   animation: liquid-float 12s ease-in-out infinite alternate;
 }
 
@@ -336,7 +358,7 @@ body {
   top: 8%;
   height: 18rem;
   width: 18rem;
-  background: radial-gradient(circle, rgba(124, 92, 255, 0.32), transparent 66%);
+  background: radial-gradient(circle, rgba(25, 215, 192, 0.18), transparent 66%);
 }
 
 .ambient-orb-two {
@@ -344,7 +366,7 @@ body {
   right: 8%;
   height: 22rem;
   width: 22rem;
-  background: radial-gradient(circle, rgba(34, 211, 238, 0.18), transparent 68%);
+  background: radial-gradient(circle, rgba(13, 112, 104, 0.14), transparent 68%);
   animation-delay: -3s;
 }
 
@@ -354,24 +376,22 @@ body {
   inset: 0;
   z-index: 0;
   background-image:
-    linear-gradient(rgba(168, 181, 255, 0.025) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(168, 181, 255, 0.025) 1px, transparent 1px);
+    linear-gradient(rgba(150, 180, 255, 0.018) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(150, 180, 255, 0.018) 1px, transparent 1px);
   background-size: 64px 64px;
   mask-image: radial-gradient(circle at 50% 28%, black, transparent 76%);
 }
 
 .orion-cockpit {
   background:
-    linear-gradient(135deg, rgba(255, 255, 255, 0.095), rgba(255, 255, 255, 0.022)),
-    radial-gradient(circle at 22% 0%, rgba(124, 92, 255, 0.26), transparent 32%),
-    radial-gradient(circle at 52% 0%, rgba(34, 211, 238, 0.16), transparent 30%),
-    radial-gradient(circle at 100% 100%, rgba(37, 99, 235, 0.34), transparent 32%),
-    rgba(5, 9, 30, 0.78);
+    linear-gradient(160deg, rgba(255, 255, 255, 0.055), rgba(255, 255, 255, 0.012) 42%),
+    radial-gradient(ellipse 70% 50% at 20% 0%, rgba(18, 112, 104, 0.16), transparent 62%),
+    radial-gradient(ellipse 60% 50% at 100% 100%, rgba(10, 72, 68, 0.13), transparent 64%),
+    rgba(3, 12, 14, 0.88);
   box-shadow:
-    0 34px 110px rgba(0, 0, 0, 0.50),
-    0 0 0 1px rgba(185, 196, 255, 0.16),
-    inset 0 1px 0 rgba(255, 255, 255, 0.18),
-    inset 0 0 110px rgba(124, 92, 255, 0.09);
+    0 30px 90px rgba(0, 4, 5, 0.52),
+    0 0 0 1px rgba(70, 132, 126, 0.13),
+    inset 0 1px 0 rgba(255, 255, 255, 0.07);
 }
 
 .orion-cockpit::after {
@@ -379,29 +399,27 @@ body {
 }
 
 .neon-panel {
-  border: 1px solid rgba(163, 178, 255, 0.20);
+  border: 1px solid rgba(70, 132, 126, 0.17);
   background:
-    linear-gradient(135deg, rgba(255, 255, 255, 0.10), rgba(255, 255, 255, 0.026)),
-    radial-gradient(circle at 0% 0%, rgba(124, 92, 255, 0.18), transparent 34%),
-    radial-gradient(circle at 100% 100%, rgba(34, 211, 238, 0.12), transparent 34%),
-    rgba(8, 13, 39, 0.58);
+    linear-gradient(160deg, rgba(255, 255, 255, 0.035), rgba(255, 255, 255, 0.008) 46%),
+    radial-gradient(ellipse 80% 60% at 0% 0%, rgba(20, 106, 99, 0.11), transparent 62%),
+    rgba(6, 17, 19, 0.9);
   box-shadow:
-    0 22px 70px rgba(0, 0, 0, 0.34),
-    inset 0 1px 0 rgba(255, 255, 255, 0.14),
-    0 0 0 1px rgba(124, 92, 255, 0.10);
+    0 18px 46px rgba(0, 4, 5, 0.42),
+    inset 0 1px 0 rgba(255, 255, 255, 0.04);
   backdrop-filter: blur(30px) saturate(180%);
   -webkit-backdrop-filter: blur(30px) saturate(180%);
 }
 
 .neon-active {
   background:
-    linear-gradient(135deg, rgba(124, 92, 255, 0.44), rgba(37, 99, 235, 0.22)),
-    rgba(255, 255, 255, 0.04);
-  border-color: rgba(160, 139, 255, 0.62) !important;
+    linear-gradient(120deg, rgba(18, 116, 107, 0.48), rgba(8, 71, 67, 0.26)),
+    rgba(255, 255, 255, 0.03);
+  border-color: rgba(25, 215, 192, 0.42) !important;
   box-shadow:
-    0 0 0 1px rgba(194, 181, 255, 0.22),
-    0 0 24px rgba(124, 92, 255, 0.44),
-    inset 0 1px 0 rgba(255, 255, 255, 0.18);
+    0 0 0 1px rgba(77, 213, 198, 0.13),
+    0 6px 20px rgba(0, 104, 95, 0.24),
+    inset 0 1px 0 rgba(255, 255, 255, 0.12);
 }
 
 @keyframes liquid-float {
@@ -417,71 +435,69 @@ body {
 /* Light-mode surfaces for the cockpit shell + neon panels */
 [data-theme="light"] body {
   background:
-    radial-gradient(circle at 16% 8%, rgba(124, 92, 255, 0.16), transparent 26rem),
-    radial-gradient(circle at 88% 18%, rgba(34, 211, 238, 0.12), transparent 28rem),
-    radial-gradient(circle at 50% 100%, rgba(99, 102, 241, 0.12), transparent 30rem),
+    radial-gradient(circle at 16% 8%, rgba(59, 130, 246, 0.16), transparent 26rem),
+    radial-gradient(circle at 88% 18%, rgba(56, 189, 248, 0.12), transparent 28rem),
+    radial-gradient(circle at 50% 100%, rgba(59, 130, 246, 0.12), transparent 30rem),
     linear-gradient(135deg, #f5f6ff 0%, #ffffff 48%, #eef6ff 100%);
 }
 
 [data-theme="light"] .orion-cockpit {
   background:
     linear-gradient(135deg, rgba(255, 255, 255, 0.66), rgba(255, 255, 255, 0.4)),
-    radial-gradient(circle at 22% 0%, rgba(124, 92, 255, 0.10), transparent 32%),
+    radial-gradient(circle at 22% 0%, rgba(59, 130, 246, 0.10), transparent 32%),
     radial-gradient(circle at 100% 100%, rgba(37, 99, 235, 0.10), transparent 32%),
     rgba(248, 249, 255, 0.92);
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.85),
-    inset 0 0 120px rgba(124, 92, 255, 0.05);
+    inset 0 0 120px rgba(59, 130, 246, 0.05);
 }
 
 [data-theme="light"] .neon-panel {
-  border-color: rgba(124, 92, 255, 0.18);
+  border-color: rgba(59, 130, 246, 0.18);
   background:
     linear-gradient(135deg, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.66)),
-    radial-gradient(circle at 0% 0%, rgba(124, 92, 255, 0.08), transparent 34%),
-    radial-gradient(circle at 100% 100%, rgba(34, 211, 238, 0.06), transparent 34%);
+    radial-gradient(circle at 0% 0%, rgba(59, 130, 246, 0.08), transparent 34%),
+    radial-gradient(circle at 100% 100%, rgba(56, 189, 248, 0.06), transparent 34%);
   box-shadow:
     0 22px 70px rgba(15, 23, 42, 0.10),
     inset 0 1px 0 rgba(255, 255, 255, 0.92),
-    0 0 0 1px rgba(124, 92, 255, 0.08);
+    0 0 0 1px rgba(59, 130, 246, 0.08);
 }
 
 [data-theme="light"] .neon-active {
-  color: #4316c4;
+  color: #1b4ed8;
   background:
-    linear-gradient(135deg, rgba(124, 92, 255, 0.20), rgba(37, 99, 235, 0.10)),
+    linear-gradient(135deg, rgba(59, 130, 246, 0.20), rgba(37, 99, 235, 0.10)),
     rgba(255, 255, 255, 0.6);
-  border-color: rgba(124, 92, 255, 0.45) !important;
+  border-color: rgba(59, 130, 246, 0.45) !important;
   box-shadow:
-    0 0 0 1px rgba(124, 92, 255, 0.18),
-    0 6px 18px rgba(124, 92, 255, 0.18);
+    0 0 0 1px rgba(59, 130, 246, 0.18),
+    0 6px 18px rgba(59, 130, 246, 0.18);
 }
 
 /* ============================================================================
    Orion deep-space background
    ----------------------------------------------------------------------------
-   Three stacked layers, cheapest first, so the surface degrades gracefully:
+   Two purely procedural layers — no photograph, no network cost, no banding
+   from a compressed JPEG behind live text:
 
-     1. base tint      — flat near-black teal, always painted
-     2. procedural     — CSS nebula + starfield, no network cost
-     3. photograph     — /orion-space-bg.jpg, drawn on top when present
+     1. field  — deep navy base with three wide, low-opacity blue washes
+     2. stars  — a faint tiled starfield that keeps the Orion identity without
+                 turning into visual noise behind data-dense panels
 
-   Layer 3 is referenced through --orion-bg-image. If the file is missing the
-   url() simply fails to paint and layer 2 shows through unchanged — no broken
-   image icon, no layout shift, no console error worth chasing.
+   Both are `position: fixed`, so scrolling a long CRM table does not drag the
+   background with it. Keep the wash opacities under ~0.22: anything stronger
+   competes with the panels for attention and the surface stops reading as a
+   product chrome.
    ========================================================================= */
-
-@theme {
-  --orion-bg-image: url("/orion-dashboard-bg.png");
-}
 
 .orion-space {
   position: relative;
   isolation: isolate;
-  background-color: #04100f;
+  background-color: #02090b;
 }
 
-/* Layer 3 + 2: photo over procedural nebula. */
+/* Layer 1: the field. */
 .orion-space::before {
   content: "";
   position: fixed;
@@ -489,90 +505,89 @@ body {
   z-index: -2;
   pointer-events: none;
   background-image:
-    linear-gradient(90deg, rgba(0, 9, 13, 0.24), rgba(0, 12, 16, 0.48)),
-    var(--orion-bg-image),
-    /* teal nebula band, running lower-left to upper-right like the source */
-    radial-gradient(ellipse 62% 40% at 74% 62%, rgba(23, 190, 178, 0.30), transparent 62%),
-    radial-gradient(ellipse 46% 30% at 62% 78%, rgba(18, 150, 148, 0.24), transparent 66%),
-    radial-gradient(ellipse 34% 24% at 84% 44%, rgba(52, 224, 208, 0.20), transparent 60%),
-    radial-gradient(ellipse 80% 60% at 20% 18%, rgba(6, 32, 34, 0.9), transparent 70%),
-    linear-gradient(148deg, #04100f 0%, #051a1a 44%, #04100f 100%);
+    /* cool wash falling from the top edge, behind the header */
+    radial-gradient(ellipse 95% 58% at 50% -14%, rgba(20, 110, 101, 0.14), transparent 72%),
+    /* single teal breath on the right so the brand accent is present, not loud */
+    radial-gradient(ellipse 52% 44% at 96% 10%, rgba(25, 215, 192, 0.06), transparent 70%),
+    /* deep-blue lift in the lower-left corner, balancing the top wash */
+    radial-gradient(ellipse 74% 58% at 2% 100%, rgba(11, 65, 62, 0.12), transparent 74%),
+    /* vignette — pulls the eye back to the centre column */
+    radial-gradient(ellipse 120% 100% at 50% 50%, transparent 42%, rgba(0, 4, 5, 0.62) 100%),
+    linear-gradient(180deg, #061113 0%, #030b0d 52%, #010709 100%);
   background-repeat: no-repeat;
   background-position: center;
   background-size: cover;
 }
 
-/* Layer 2b: starfield. Two tiled dot grids at different scales read as depth. */
+/* Layer 2: starfield. Tiled dot grids at different scales read as depth. */
 .orion-space::after {
   content: "";
   position: fixed;
   inset: 0;
   z-index: -1;
   pointer-events: none;
-  opacity: 0.5;
+  opacity: 0.08;
   background-image:
-    radial-gradient(1.4px 1.4px at 18% 22%, rgba(255, 255, 255, 0.9), transparent 100%),
-    radial-gradient(1.1px 1.1px at 68% 12%, rgba(214, 250, 248, 0.8), transparent 100%),
-    radial-gradient(1.6px 1.6px at 42% 74%, rgba(255, 255, 255, 0.75), transparent 100%),
-    radial-gradient(1px 1px at 86% 58%, rgba(180, 240, 236, 0.7), transparent 100%),
-    radial-gradient(1.2px 1.2px at 8% 66%, rgba(255, 255, 255, 0.65), transparent 100%),
-    radial-gradient(1px 1px at 54% 38%, rgba(239, 179, 79, 0.55), transparent 100%);
-  background-size: 340px 340px, 250px 250px, 420px 420px, 190px 190px, 300px 300px, 520px 520px;
-}
-
-/* When the photo is present the procedural nebula would double-expose, so the
-   image sits at full strength and the CSS layers act only as edge fill. */
-@supports (background-image: var(--orion-bg-image)) {
-  .orion-space::before { background-blend-mode: normal, screen, screen, screen, normal, normal; }
+    radial-gradient(1.2px 1.2px at 18% 22%, rgba(255, 255, 255, 0.9), transparent 100%),
+    radial-gradient(1px 1px at 68% 12%, rgba(214, 232, 255, 0.8), transparent 100%),
+    radial-gradient(1.3px 1.3px at 42% 74%, rgba(255, 255, 255, 0.7), transparent 100%),
+    radial-gradient(1px 1px at 86% 58%, rgba(186, 214, 255, 0.7), transparent 100%),
+    radial-gradient(1px 1px at 8% 66%, rgba(255, 255, 255, 0.6), transparent 100%);
+  background-size: 380px 380px, 280px 280px, 460px 460px, 210px 210px, 330px 330px;
+  /* fade the stars out of the working area so they never sit under a data grid */
+  mask-image: radial-gradient(ellipse 90% 80% at 50% 12%, black, transparent 78%);
 }
 
 /* Content surfaces ---------------------------------------------------------- */
 
+/* One quiet recipe for every panel: a hairline border, a single top-light
+   gradient and one soft shadow. No coloured corner glows — with a dozen panels
+   on the dashboard they stack into haze, which is what made the surface read
+   as busy rather than premium. */
 .orion-panel {
   position: relative;
   isolation: isolate;
   overflow: hidden;
-  border: 1px solid rgba(144, 226, 222, 0.17);
+  border: 1px solid rgba(72, 130, 124, 0.16);
   border-radius: 14px;
   background:
-    linear-gradient(145deg, rgba(211, 255, 251, 0.075), transparent 28%),
-    radial-gradient(circle at 100% 0%, rgba(46, 230, 197, 0.075), transparent 34%),
-    linear-gradient(158deg, rgba(11, 35, 37, 0.44), rgba(3, 16, 21, 0.56));
+    linear-gradient(180deg, rgba(255, 255, 255, 0.025), rgba(255, 255, 255, 0) 38%),
+    linear-gradient(158deg, rgba(9, 24, 26, 0.94), rgba(5, 15, 17, 0.96));
   box-shadow:
-    0 14px 34px rgba(0, 0, 0, 0.34),
-    inset 0 1px 0 rgba(203, 255, 250, 0.11),
-    inset 0 -1px 0 rgba(46, 230, 197, 0.035),
-    0 0 20px rgba(46, 230, 197, 0.025);
-  backdrop-filter: blur(22px) saturate(145%);
-  -webkit-backdrop-filter: blur(22px) saturate(145%);
+    0 12px 30px rgba(0, 4, 5, 0.36),
+    inset 0 1px 0 rgba(255, 255, 255, 0.035);
+  backdrop-filter: blur(18px) saturate(115%);
+  -webkit-backdrop-filter: blur(18px) saturate(115%);
 }
 
 .orion-panel-hover {
   transition: border-color 200ms ease, box-shadow 200ms ease, transform 200ms ease;
 }
 .orion-panel-hover:hover {
-  border-color: rgba(46, 230, 197, 0.34);
+  border-color: rgba(25, 215, 192, 0.3);
   box-shadow:
-    0 18px 42px rgba(0, 0, 0, 0.4),
-    0 0 24px rgba(46, 230, 197, 0.08),
-    inset 0 1px 0 rgba(174, 240, 234, 0.14);
+    0 16px 38px rgba(2, 6, 18, 0.44),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
 }
 
-/* Active sidebar destination — teal wash + left rail, as in the reference. */
+/* Active sidebar destination — blue wash with a teal edge, so the accent still
+   ties back to the mark without repainting the whole rail green. */
 .orion-nav-active {
-  color: #eafffb;
-  background: linear-gradient(96deg, rgba(79, 218, 218, 0.28), rgba(23, 112, 119, 0.18));
+  color: #f2f7ff;
+  background: linear-gradient(96deg, rgba(16, 116, 107, 0.5), rgba(9, 67, 64, 0.3));
   box-shadow:
-    inset 0 1px 0 rgba(230, 255, 253, 0.16),
-    inset 0 0 0 1px rgba(46, 230, 197, 0.24),
-    0 6px 18px rgba(46, 230, 197, 0.08);
+    inset 0 1px 0 rgba(225, 255, 250, 0.08),
+    inset 0 0 0 1px rgba(42, 190, 174, 0.14),
+    inset 2px 0 0 rgba(25, 215, 192, 0.82),
+    0 6px 18px rgba(0, 94, 85, 0.16);
 }
 
-/* Dashboard cockpit — compact transparent liquid glass matching the Orion CRM
-   reference while leaving every page and interaction component reusable. */
+/* Dashboard cockpit — compact transparent glass over the navy field. The
+   chrome (header, rail) sits a shade darker than the panels so the working
+   area is the brightest thing on screen. */
 .orion-dashboard {
-  color: #eef8f7;
-  background: #020b0e;
+  color: #eef3fc;
+  background: #02090b;
 }
 
 .orion-dashboard::after {
@@ -580,48 +595,87 @@ body {
 }
 
 .orion-dashboard-stage {
-  background: linear-gradient(180deg, rgba(0, 10, 14, 0.08), rgba(0, 10, 14, 0.2));
-}
-
-.orion-dashboard-header {
-  border-bottom: 1px solid rgba(129, 224, 216, 0.1);
-  background: linear-gradient(180deg, rgba(1, 14, 18, 0.6), rgba(1, 14, 18, 0.28));
-  box-shadow: inset 0 -1px 0 rgba(255, 255, 255, 0.018);
-  backdrop-filter: blur(22px) saturate(135%);
-  -webkit-backdrop-filter: blur(22px) saturate(135%);
+  background: transparent;
 }
 
 .orion-dashboard-sidebar {
-  border-color: rgba(129, 224, 216, 0.1);
-  background:
-    linear-gradient(180deg, rgba(3, 18, 22, 0.74), rgba(2, 14, 18, 0.58)),
-    radial-gradient(circle at 50% 0%, rgba(46, 230, 197, 0.07), transparent 35%);
-  box-shadow: inset -1px 0 0 rgba(210, 255, 251, 0.025), 12px 0 36px rgba(0, 0, 0, 0.15);
-  backdrop-filter: blur(28px) saturate(145%);
-  -webkit-backdrop-filter: blur(28px) saturate(145%);
+  border-color: rgba(70, 132, 126, 0.1);
+  background: linear-gradient(180deg, rgba(3, 12, 14, 0.97), rgba(2, 9, 11, 0.92));
+  box-shadow: inset -1px 0 0 rgba(220, 255, 250, 0.025), 14px 0 40px rgba(0, 4, 5, 0.26);
+  backdrop-filter: blur(28px) saturate(130%);
+  -webkit-backdrop-filter: blur(28px) saturate(130%);
 }
 
 .orion-glass-control {
-  border: 1px solid rgba(145, 224, 221, 0.14);
+  border: 1px solid rgba(70, 132, 126, 0.16);
   background:
-    linear-gradient(180deg, rgba(224, 255, 252, 0.055), rgba(2, 17, 22, 0.2)),
-    rgba(5, 25, 30, 0.34);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06), 0 6px 18px rgba(0, 0, 0, 0.12);
-  backdrop-filter: blur(18px) saturate(140%);
-  -webkit-backdrop-filter: blur(18px) saturate(140%);
+    linear-gradient(180deg, rgba(226, 255, 250, 0.035), rgba(2, 12, 14, 0.18)),
+    rgba(7, 20, 22, 0.62);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.035), 0 6px 18px rgba(0, 4, 5, 0.18);
+  backdrop-filter: blur(18px) saturate(130%);
+  -webkit-backdrop-filter: blur(18px) saturate(130%);
+}
+
+.orion-header-search {
+  border-color: rgba(95, 184, 174, 0.22);
+  background:
+    linear-gradient(180deg, rgba(25, 53, 54, 0.62), rgba(5, 18, 20, 0.52)),
+    rgba(2, 12, 14, 0.44);
+  box-shadow:
+    0 14px 36px rgba(0, 4, 5, 0.34),
+    inset 0 1px 0 rgba(225, 255, 250, 0.08),
+    inset 0 0 0 1px rgba(25, 215, 192, 0.025);
+  backdrop-filter: blur(16px) saturate(128%);
+  -webkit-backdrop-filter: blur(16px) saturate(128%);
+}
+
+.orion-floating-actions {
+  border-radius: 14px;
+  border: 1px solid rgba(95, 184, 174, 0.18);
+  background:
+    linear-gradient(180deg, rgba(23, 49, 50, 0.58), rgba(4, 17, 19, 0.5)),
+    rgba(2, 12, 14, 0.42);
+  box-shadow:
+    0 14px 36px rgba(0, 4, 5, 0.34),
+    inset 0 1px 0 rgba(225, 255, 250, 0.07),
+    inset 0 0 0 1px rgba(25, 215, 192, 0.02);
+  backdrop-filter: blur(16px) saturate(128%);
+  -webkit-backdrop-filter: blur(16px) saturate(128%);
 }
 
 .orion-add-widget {
-  border: 1px solid rgba(107, 241, 235, 0.25);
-  background: linear-gradient(110deg, rgba(20, 126, 132, 0.66), rgba(21, 67, 74, 0.62));
-  box-shadow: inset 0 1px 0 rgba(226, 255, 253, 0.16), 0 8px 24px rgba(35, 212, 208, 0.12);
+  border: 1px solid rgba(25, 215, 192, 0.32);
+  background: linear-gradient(110deg, rgba(11, 115, 105, 0.92), rgba(7, 83, 78, 0.88));
+  box-shadow: inset 0 1px 0 rgba(225, 255, 250, 0.12), 0 8px 24px rgba(0, 114, 103, 0.2);
+  color: #f4f8ff;
 }
 
-[data-theme="light"] .orion-space { background-color: #f4f7f7; }
+[data-theme="light"] .orion-space { background-color: #f5f7fb; }
 [data-theme="light"] .orion-space::before,
 [data-theme="light"] .orion-space::after { display: none; }
 [data-theme="light"] .orion-panel {
-  border-color: rgba(15, 40, 40, 0.10);
-  background: rgba(255, 255, 255, 0.82);
-  box-shadow: 0 16px 40px rgba(12, 40, 40, 0.08), inset 0 1px 0 #fff;
+  border-color: rgba(20, 38, 72, 0.10);
+  background: rgba(255, 255, 255, 0.84);
+  box-shadow: 0 16px 40px rgba(20, 38, 72, 0.08), inset 0 1px 0 #fff;
+}
+[data-theme="light"] .orion-dashboard {
+  color: #0b1220;
+  background: #f5f7fb;
+}
+[data-theme="light"] .orion-dashboard-sidebar {
+  border-color: rgba(20, 38, 72, 0.09);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.88), rgba(255, 255, 255, 0.72));
+  box-shadow: 14px 0 40px rgba(20, 38, 72, 0.06);
+}
+[data-theme="light"] .orion-glass-control {
+  border-color: rgba(20, 38, 72, 0.12);
+  background: rgba(255, 255, 255, 0.78);
+  box-shadow: inset 0 1px 0 #fff, 0 6px 18px rgba(20, 38, 72, 0.06);
+}
+[data-theme="light"] .orion-nav-active {
+  color: #12336b;
+  background: linear-gradient(96deg, rgba(56, 118, 226, 0.16), rgba(56, 118, 226, 0.05));
+  box-shadow:
+    inset 0 0 0 1px rgba(56, 118, 226, 0.20),
+    inset 2px 0 0 rgba(20, 160, 140, 0.75);
 }

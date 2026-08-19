@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/shared/components/ui/card";
 import { Button } from "@/shared/components/ui/button";
 import { Input } from "@/shared/components/ui/input";
@@ -110,7 +111,8 @@ const statusClass = {
 };
 
 export default function AIPage() {
-  const [input, setInput] = useState("");
+  const searchParams = useSearchParams();
+  const [input, setInput] = useState(() => searchParams.get("prompt") ?? "");
   const [conversation, setConversation] = useState(initialConversation);
   const [searchQuery, setSearchQuery] = useState("");
   const [activeCategory, setActiveCategory] = useState<ConnectorCategory | "all">("all");

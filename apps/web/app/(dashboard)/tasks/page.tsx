@@ -463,7 +463,7 @@ export default function TasksPage() {
                 <button
                   type="button"
                   onClick={() => setStatus(selectedTask.id, "done")}
-                  className="flex h-11 w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-indigo-500 to-violet-500 text-sm font-semibold text-white shadow-glow transition-all hover:opacity-90 active:scale-[0.99]"
+                  className="flex h-11 w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-blue-600 to-sky-500 text-sm font-semibold text-white shadow-glow transition-all hover:opacity-90 active:scale-[0.99]"
                 >
                   <CheckCircle2 className="h-4 w-4" />
                   Move to Done

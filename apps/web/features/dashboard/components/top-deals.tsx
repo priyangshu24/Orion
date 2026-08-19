@@ -1,5 +1,6 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { topDeals, type DealStage } from "../constants/crm-data";
 
 const STAGE_STYLES: Record<DealStage, string> = {
@@ -9,12 +10,16 @@ const STAGE_STYLES: Record<DealStage, string> = {
 };
 
 export function TopDeals() {
+  const router = useRouter();
+
   return (
     <section className="orion-panel flex flex-col p-3">
       <header className="flex items-center justify-between gap-3">
         <h2 className="text-[13px] font-semibold text-foreground">Top Deals</h2>
         <button
           type="button"
+          onClick={() => router.push("/deals")}
+          aria-label="View all deals"
           className="text-[10px] text-primary transition hover:text-primary/80"
         >
           View all
@@ -23,10 +28,13 @@ export function TopDeals() {
 
       <ul className="mt-2 flex flex-col">
         {topDeals.map((deal) => (
-          <li
-            key={deal.id}
-            className="flex items-center gap-1.5 rounded-lg px-1 py-1.5 transition hover:bg-foreground/[0.04]"
-          >
+          <li key={deal.id}>
+            <button
+              type="button"
+              onClick={() => router.push(`/deals?deal=${deal.id}`)}
+              className="flex w-full items-center gap-1.5 rounded-lg px-1 py-1.5 text-left transition hover:bg-foreground/[0.04]"
+              aria-label={`Open ${deal.company} deal`}
+            >
             {/* basis-0 lets the name shrink below its content width before the
                 amount or stage badge are allowed to compress. */}
             <p className="min-w-0 flex-1 basis-0 truncate text-[11px] text-foreground">
@@ -40,6 +48,7 @@ export function TopDeals() {
             >
               {deal.stage}
             </span>
+            </button>
           </li>
         ))}
       </ul>

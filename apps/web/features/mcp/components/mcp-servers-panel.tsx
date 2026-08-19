@@ -215,7 +215,7 @@ export function McpServersPanel() {
         <button
           type="button"
           onClick={addServer}
-          className="flex h-11 shrink-0 items-center justify-center gap-1.5 rounded-full bg-gradient-to-r from-indigo-500 to-violet-500 px-5 text-sm font-semibold text-white shadow-glow transition-opacity hover:opacity-90"
+          className="flex h-11 shrink-0 items-center justify-center gap-1.5 rounded-full bg-gradient-to-r from-blue-600 to-sky-500 px-5 text-sm font-semibold text-white shadow-glow transition-opacity hover:opacity-90"
         >
           <Plus className="h-4 w-4" />
           Add MCP server
@@ -324,7 +324,7 @@ export function McpServersPanel() {
                     <button
                       type="button"
                       onClick={() => toggle(s.id)}
-                      className="flex h-8 items-center gap-1.5 rounded-lg bg-gradient-to-r from-indigo-500 to-violet-500 px-3.5 text-xs font-semibold text-white shadow-glow transition-opacity hover:opacity-90"
+                      className="flex h-8 items-center gap-1.5 rounded-lg bg-gradient-to-r from-blue-600 to-sky-500 px-3.5 text-xs font-semibold text-white shadow-glow transition-opacity hover:opacity-90"
                     >
                       <Plus className="h-3.5 w-3.5" />
                       Connect

@@ -343,7 +343,7 @@ export default function ConnectorsPage() {
                     <button
                       type="button"
                       onClick={() => setStatus(c.id, "connected")}
-                      className="flex h-8 items-center gap-1.5 rounded-lg bg-gradient-to-r from-indigo-500 to-violet-500 px-3.5 text-xs font-semibold text-white shadow-glow transition-opacity hover:opacity-90"
+                      className="flex h-8 items-center gap-1.5 rounded-lg bg-gradient-to-r from-blue-600 to-sky-500 px-3.5 text-xs font-semibold text-white shadow-glow transition-opacity hover:opacity-90"
                     >
                       <Plus className="h-3.5 w-3.5" />
                       Connect
