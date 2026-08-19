@@ -1,15 +1,19 @@
 import {
-  LayoutDashboard,
-  CheckSquare,
-  Calendar,
-  Mail,
-  Sparkles,
-  Settings,
   BarChart3,
-  Heart,
   Bell,
   Blocks,
   BrainCircuit,
+  Building2,
+  Calendar,
+  CheckSquare,
+  Contact,
+  Heart,
+  LayoutDashboard,
+  Mail,
+  Settings,
+  Sparkles,
+  Target,
+  Workflow,
   type LucideIcon,
 } from "lucide-react";
 
@@ -20,17 +24,25 @@ export interface NavItem {
   badge?: string;
 }
 
+/** Primary CRM destinations — the sidebar's main group. */
 export const mainNavItems: NavItem[] = [
   { label: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
+  { label: "Leads", href: "/leads", icon: Target },
+  { label: "Deals", href: "/deals", icon: BarChart3 },
+  { label: "Contacts", href: "/contacts", icon: Contact },
+  { label: "Companies", href: "/companies", icon: Building2 },
   { label: "Tasks", href: "/tasks", icon: CheckSquare, badge: "12" },
   { label: "Calendar", href: "/calendar", icon: Calendar },
-  { label: "Emails", href: "/emails", icon: Mail, badge: "3" },
-  { label: "Nova", href: "/ai", icon: Sparkles },
-  { label: "Intelligence", href: "/intelligence", icon: BrainCircuit },
-  { label: "Connectors", href: "/connectors", icon: Blocks },
+  { label: "Reports", href: "/reports", icon: BarChart3 },
+  { label: "Automations", href: "/automations", icon: Workflow },
+  { label: "AI Assistant", href: "/ai", icon: Sparkles },
 ];
 
+/** Workspace tooling — secondary group, keeps every route reachable. */
 export const secondaryNavItems: NavItem[] = [
+  { label: "Intelligence", href: "/intelligence", icon: BrainCircuit },
+  { label: "Emails", href: "/emails", icon: Mail, badge: "3" },
+  { label: "Connectors", href: "/connectors", icon: Blocks },
   { label: "Analytics", href: "/analytics", icon: BarChart3 },
   { label: "Habits", href: "/habits", icon: Heart },
   { label: "Notifications", href: "/notifications", icon: Bell },

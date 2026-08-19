@@ -10,20 +10,22 @@
 .shell { display: grid; grid-template-columns: minmax(310px, .92fr) minmax(430px, 1.08fr); width: min(1440px, 100%); min-height: 100svh; margin: 0 auto; }
 .story { display: flex; flex-direction: column; min-width: 0; padding: 45px 30px 20px 66px; }
 .brand { display: flex; align-items: center; width: max-content; }
-.brandLogo { width: clamp(270px, 21vw, 330px); height: auto; object-fit: contain; filter: drop-shadow(0 5px 18px rgba(0,0,0,.3)); }
+.brandLogo { width: clamp(250px, 19vw, 300px); height: auto; object-fit: contain; filter: drop-shadow(0 5px 18px rgba(0,0,0,.3)); }
 .brandMark { position: relative; display: block; width: 70px; height: 70px; overflow: hidden; border-radius: 50%; background: #010708; }
 .brandMarkImage { position: absolute; top: -2px; left: -21px; width: 112px; max-width: none; height: 75px; object-fit: cover; mix-blend-mode: screen; }
 .brandCopy { display: flex; flex-direction: column; gap: 8px; }
 .brandCopy strong { font-size: clamp(25px, 2.1vw, 42px); font-weight: 500; line-height: 1; letter-spacing: .35em; text-shadow: 0 0 18px rgba(255,255,255,.15); }
 .brandCopy small { color: #efb34f; font-size: clamp(7px, .62vw, 11px); font-weight: 700; letter-spacing: .4em; }
-.pitch { margin-top: clamp(58px, 8vh, 128px); }
-.pitch h1 { font-size: clamp(29px, 2.45vw, 46px); font-weight: 650; line-height: 1.18; letter-spacing: -.04em; text-shadow: 0 2px 16px rgba(0,0,0,.55); }
+.pitch { margin-top: clamp(24px, 4vh, 56px); }
+.pitch h1 { font-size: clamp(27px, 2.3vw, 43px); font-weight: 650; line-height: 1.18; letter-spacing: -.04em; text-shadow: 0 2px 16px rgba(0,0,0,.55); }
 .pitch em { color: #eca83c; font-style: normal; }
-.pitch p { margin-top: 20px; color: rgba(225,232,232,.72); font-size: 15px; line-height: 1.75; }
-.benefits { display: grid; grid-template-columns: repeat(3, 1fr); margin-top: auto; overflow: hidden; border: 1px solid rgba(177,237,239,.18); border-radius: 18px; background: linear-gradient(135deg, rgba(21,40,43,.82), rgba(5,17,22,.74)); box-shadow: inset 0 1px 0 rgba(255,255,255,.07), 0 20px 44px rgba(0,0,0,.26); backdrop-filter: blur(18px); }
-.benefits article { padding: 25px 18px 24px; text-align: center; }
-.benefits article + article { border-left: 1px solid rgba(177,237,239,.12); }
-.benefitIcon { display: grid; width: 54px; height: 54px; margin: 0 auto 15px; place-items: center; border: 1px solid rgba(121,247,248,.3); border-radius: 50%; background: rgba(4,22,28,.65); box-shadow: 0 0 20px rgba(64,236,237,.11); }
+.pitch p { margin-top: 18px; color: rgba(225,232,232,.72); font-size: 14px; line-height: 1.75; }
+.benefits { position: relative; isolation: isolate; display: grid; width: 100%; align-self: end; grid-template-columns: repeat(3, 1fr); margin-top: auto; overflow: hidden; border: 1px solid rgba(188,242,244,.3); border-radius: 18px; background: linear-gradient(135deg, rgba(16,43,48,.19), rgba(4,17,22,.07) 58%, rgba(15,55,61,.14)); box-shadow: inset 0 1px 0 rgba(255,255,255,.16), inset 0 -1px 0 rgba(85,231,235,.09), 0 18px 44px rgba(0,0,0,.24), 0 0 26px rgba(65,226,231,.05); -webkit-backdrop-filter: blur(21px) saturate(135%); backdrop-filter: blur(21px) saturate(135%); }
+.benefits::before { position: absolute; z-index: -1; inset: 0; border-radius: inherit; background: radial-gradient(circle at 88% 8%, rgba(189,255,255,.12), transparent 25%), radial-gradient(circle at 8% 100%, rgba(28,211,218,.07), transparent 33%), linear-gradient(115deg, rgba(255,255,255,.035), transparent 34%, rgba(111,245,247,.03) 76%, transparent); content: ""; pointer-events: none; }
+.benefits::after { position: absolute; z-index: 2; inset: 1px; border: 1px solid rgba(255,255,255,.055); border-radius: 17px; content: ""; pointer-events: none; }
+.benefits article { position: relative; z-index: 1; display: flex; flex-direction: column; align-items: center; padding: 25px 18px 24px; text-align: center; }
+.benefits article + article { border-left: 1px solid rgba(187,239,241,.14); }
+.benefitIcon { display: grid; width: 54px; height: 54px; margin: 0 auto 15px; place-items: center; border: 1px solid rgba(121,247,248,.3); border-radius: 50%; background: radial-gradient(circle at 35% 25%, rgba(97,246,247,.08), rgba(3,24,30,.18) 68%); box-shadow: inset 0 1px 0 rgba(255,255,255,.1), 0 0 22px rgba(64,236,237,.14); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); }
 .benefitIcon svg { width: 25px; color: #58f1f2; stroke-width: 1.5; }
 .benefits h2 { font-size: 12px; font-weight: 650; }
 .benefits p { margin-top: 9px; color: rgba(225,232,232,.66); font-size: 10px; line-height: 1.55; }
@@ -68,6 +70,8 @@
 .googleIcon { font-size: 18px; font-weight: 750; background: conic-gradient(from -45deg, #4285f4 0 25%, #34a853 0 45%, #fbbc05 0 68%, #ea4335 0 85%, #4285f4 0); background-clip: text; color: transparent; }
 .switchMode { position: relative; margin-top: var(--footGap); color: rgba(225,232,232,.66); font-size: var(--micro); text-align: center; }
 @media (min-width: 1001px) {
+  .brandLogo { transform: translate(-12px, -8px); }
+  .pitch { transform: translateX(30px); }
   .formPanel { transform: translateX(32px); }
 }
 /* Short desktop viewports — laptops, browser zoom, Windows display scaling.
@@ -78,9 +82,9 @@
   .story { padding-top: 30px; padding-bottom: 18px; }
   .brandMark { width: 62px; height: 62px; }
   .brandMarkImage { left: -19px; width: 100px; height: 67px; }
-  .pitch { margin-top: 38px; }
-  .pitch h1 { font-size: clamp(29px, 2.25vw, 40px); }
-  .pitch p { margin-top: 14px; line-height: 1.65; }
+  .pitch { margin-top: 8px; }
+  .pitch h1 { font-size: clamp(27px, 2.1vw, 38px); }
+  .pitch p { margin-top: 12px; line-height: 1.65; }
   .benefits article { padding-top: 20px; padding-bottom: 20px; }
   .benefitIcon { width: 48px; height: 48px; margin-bottom: 12px; }
   .benefitIcon svg { width: 21px; }
