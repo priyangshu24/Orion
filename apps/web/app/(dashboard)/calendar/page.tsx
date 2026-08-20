@@ -1,7 +1,7 @@
-import { CalendarClient } from "./calendar-client";
+import { CalendarWorkspace } from "@/features/calendar";
 
 export const dynamic = "force-dynamic";
 
 export default function CalendarPage() {
-  return <CalendarClient />;
+  return <CalendarWorkspace />;
 }
