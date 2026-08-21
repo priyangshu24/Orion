@@ -22,6 +22,7 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { Avatar, AvatarFallback } from "@/shared/components/ui/avatar";
+import { CompanyBrand } from "@/shared/components/company-brand";
 import { cn, formatDate, getInitials } from "@/shared/lib/utils";
 import { mockLeads } from "../constants/mock-leads";
 import type {
@@ -185,7 +186,7 @@ function LeadDialog({ lead, onClose, onSave }: { lead: Lead | null; onClose: () 
             <input type="email" value={draft.email} onChange={(event) => setDraft((current) => ({ ...current, email: event.target.value }))} className="orion-glass-control mt-1.5 h-10 w-full rounded-lg px-3 text-sm text-foreground outline-none focus:border-primary/50" placeholder="jane@company.com" />
           </label>
           <label className="text-[11px] font-medium text-muted-foreground">Company
-            <input value={draft.company} onChange={(event) => setDraft((current) => ({ ...current, company: event.target.value }))} className="orion-glass-control mt-1.5 h-10 w-full rounded-lg px-3 text-sm text-foreground outline-none focus:border-primary/50" placeholder="Acme Corporation" />
+            <input value={draft.company} onChange={(event) => setDraft((current) => ({ ...current, company: event.target.value }))} className="orion-glass-control mt-1.5 h-10 w-full rounded-lg px-3 text-sm text-foreground outline-none focus:border-primary/50" placeholder="Apple" />
           </label>
           <label className="text-[11px] font-medium text-muted-foreground">Source
             <select value={draft.source} onChange={(event) => setDraft((current) => ({ ...current, source: event.target.value as LeadSource }))} className="orion-glass-control mt-1.5 h-10 w-full rounded-lg px-3 text-sm text-foreground outline-none focus:border-primary/50">
@@ -385,7 +386,7 @@ export function LeadsWorkspace() {
             <tbody>{pageLeads.map((lead) => { const score = scoreMeta(lead.score); return <tr key={lead.id} className={cn("border-b border-border/70 text-[11px] transition hover:bg-foreground/[0.025]", selectedIds.has(lead.id) && "bg-primary/[0.035]")}>
               <td className="px-4 py-2.5"><input type="checkbox" aria-label={`Select ${lead.name}`} checked={selectedIds.has(lead.id)} onChange={() => toggleSelected(lead.id)} className="accent-primary" /></td>
               <td className="py-2.5 pr-4"><button type="button" onClick={() => setDetailLead(lead)} className="flex items-center gap-2.5 text-left"><Avatar className="h-7 w-7 ring-1 ring-border"><AvatarFallback className="text-[9px]">{getInitials(lead.name)}</AvatarFallback></Avatar><span className="min-w-0"><span className="block truncate font-medium text-foreground">{lead.name}</span><span className="block truncate text-[9px] text-muted-foreground">{lead.email}</span></span></button></td>
-              {columns.company ? <td className="py-2.5 pr-4 text-foreground"><span className="flex items-center gap-2"><Building2 className="h-3.5 w-3.5 text-muted-foreground" />{lead.company}</span></td> : null}
+              {columns.company ? <td className="py-2.5 pr-4 text-foreground"><CompanyBrand company={lead.company} /></td> : null}
               {columns.status ? <td className="py-2.5 pr-4"><span className={cn("rounded border px-2 py-1 text-[9px]", statusMeta[lead.status].className)}>{statusMeta[lead.status].label}</span></td> : null}
               {columns.score ? <td className="py-2.5 pr-4"><span className="flex items-center gap-2 text-foreground"><span className="w-5 text-right">{lead.score}</span><span className={cn("rounded px-1.5 py-1 text-[9px]", score.className)}>{score.label}</span></span></td> : null}
               {columns.source ? <td className="py-2.5 pr-4 text-muted-foreground">{lead.source}</td> : null}

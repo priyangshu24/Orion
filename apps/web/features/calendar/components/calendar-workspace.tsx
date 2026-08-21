@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import {
   useEffect,
   useMemo,
@@ -22,10 +23,12 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { cn } from "@/shared/lib/utils";
+import { CompanyBrand } from "@/shared/components/company-brand";
 import {
   calendarWeek,
   eventKindMeta,
   initialCalendarEvents,
+  teamInviteGroups,
 } from "../constants/events";
 import type {
   CalendarEventDraft,
@@ -35,17 +38,24 @@ import type {
 } from "../types";
 
 const HOURS = Array.from({ length: 12 }, (_, index) => index + 8);
+const EVENT_START_TIMES = Array.from({ length: 48 }, (_, index) => index * 0.5);
 const PX_PER_HOUR = 72;
 /** Opaque base under every event card — see the boxShadow note in TimeGrid. */
 const CARD_BASE = "#0a1120";
-/** Chrome accent for this workspace: the create action and the active view. */
-const ACCENT = "#6d5ce7";
+/** Chrome accent for this workspace: aligns calendar controls with Orion teal. */
+const ACCENT = "#19d7c0";
 const kinds = Object.keys(eventKindMeta) as CalendarEventKind[];
+const teamNames = Object.keys(teamInviteGroups) as Array<keyof typeof teamInviteGroups>;
+
+function matchingTeam(value: string) {
+  const normalized = value.trim().toLocaleLowerCase();
+  return teamNames.find((team) => team.toLocaleLowerCase() === normalized);
+}
 
 function timeLabel(hour: number) {
   const whole = Math.floor(hour);
   const minutes = hour % 1 ? "30" : "00";
-  const display = whole > 12 ? whole - 12 : whole;
+  const display = whole % 12 || 12;
   return `${display}:${minutes} ${whole >= 12 ? "PM" : "AM"}`;
 }
 
@@ -152,24 +162,57 @@ function EventDialog({
     duration: event?.duration ?? 1,
     kind: event?.kind ?? initial?.kind ?? "meeting",
     attendees: event?.attendees ?? 2,
+    invitees: event?.invitees ?? [],
     location: event?.location ?? "Google Meet",
     notes: event?.notes ?? "",
   });
+  const [inviteeInput, setInviteeInput] = useState("");
+  const [kindOpen, setKindOpen] = useState(false);
   const field =
     "orion-glass-control mt-1.5 h-10 w-full rounded-lg px-3 text-sm text-foreground outline-none";
+  const addInvitees = (values: string[], source?: string) => {
+    const members = values.map((value) => value.trim().toLocaleLowerCase()).filter(Boolean);
+    if (!members.length) return;
+    setDraft((current) => {
+      const invitees = [...new Set([...current.invitees, ...members])];
+      return { ...current, invitees, attendees: invitees.length };
+    });
+    if (source) toast.success(`${source} invited`);
+  };
+  const addInviteeInput = () => {
+    const input = inviteeInput.trim();
+    if (!input) return;
+    const team = matchingTeam(input);
+    if (team) addInvitees([...teamInviteGroups[team]], `${team} (${teamInviteGroups[team].length} members)`);
+    else {
+      const emails = input.split(/[\s,;]+/).filter((value) => /^\S+@\S+\.\S+$/.test(value));
+      if (!emails.length) return toast.error("Enter a valid email or select a team");
+      addInvitees(emails);
+    }
+    setInviteeInput("");
+  };
+  const removeInvitee = (email: string) => setDraft((current) => {
+    const invitees = current.invitees.filter((invitee) => invitee !== email);
+    return { ...current, invitees, attendees: invitees.length };
+  });
+  const accountTeam = matchingTeam(draft.account);
   function submit(e: FormEvent) {
     e.preventDefault();
     if (!draft.title.trim()) return toast.error("Event title is required");
+    const teamInvitees = accountTeam ? [...teamInviteGroups[accountTeam]] : [];
+    const invitees = [...new Set([...draft.invitees, ...teamInvitees])];
     onSave({
       ...draft,
       title: draft.title.trim(),
       account: draft.account.trim() || "Internal",
+      invitees,
+      attendees: invitees.length || draft.attendees,
       notes: draft.notes.trim() || "No notes added.",
     });
   }
   return (
     <div
-      className="fixed inset-0 z-50 grid place-items-center p-4"
+      className="fixed inset-0 z-50 grid items-start justify-items-center px-4 pb-4 pt-5"
       role="dialog"
       aria-modal="true"
       aria-labelledby="event-dialog-title"
@@ -182,7 +225,7 @@ function EventDialog({
       />
       <form
         onSubmit={submit}
-        className="neon-panel relative z-10 w-full max-w-2xl rounded-2xl p-5 shadow-floating"
+        className="orion-event-dialog neon-panel relative z-10 w-full max-w-xl rounded-2xl p-4 shadow-floating"
       >
         <header className="flex justify-between">
           <div>
@@ -205,7 +248,7 @@ function EventDialog({
             <X className="h-4 w-4" />
           </button>
         </header>
-        <div className="mt-5 grid gap-4 sm:grid-cols-2">
+        <div className="mt-4 grid gap-3 sm:grid-cols-2">
           <label className="text-[10px] text-muted-foreground">
             Event title
             <input
@@ -224,6 +267,10 @@ function EventDialog({
               onChange={(e) =>
                 setDraft((d) => ({ ...d, account: e.target.value }))
               }
+              onBlur={() => {
+                const team = matchingTeam(draft.account);
+                if (team) addInvitees([...teamInviteGroups[team]], `${team} (${teamInviteGroups[team].length} members)`);
+              }}
               className={field}
             />
           </label>
@@ -252,13 +299,11 @@ function EventDialog({
               }
               className={field}
             >
-              {Array.from({ length: 22 }, (_, index) => 8 + index * 0.5).map(
-                (hour) => (
+              {EVENT_START_TIMES.map((hour) => (
                   <option key={hour} value={hour}>
                     {timeLabel(hour)}
                   </option>
-                ),
-              )}
+                ))}
             </select>
           </label>
           <label className="text-[10px] text-muted-foreground">
@@ -276,37 +321,72 @@ function EventDialog({
               <option value={2}>2 hours</option>
             </select>
           </label>
-          <label className="text-[10px] text-muted-foreground">
-            Event type
-            <select
-              value={draft.kind}
-              onChange={(e) =>
-                setDraft((d) => ({
-                  ...d,
-                  kind: e.target.value as CalendarEventKind,
-                }))
-              }
-              className={field}
+          <div className="relative text-[10px] text-muted-foreground">
+            <span>Event type</span>
+            <button
+              type="button"
+              aria-haspopup="listbox"
+              aria-expanded={kindOpen}
+              onClick={() => setKindOpen((open) => !open)}
+              className="orion-glass-control mt-1.5 flex h-10 w-full items-center justify-between rounded-lg px-3 text-left text-sm text-foreground outline-none"
             >
-              {kinds.map((kind) => (
-                <option key={kind} value={kind}>
-                  {eventKindMeta[kind].label}
-                </option>
+              <span className="flex items-center gap-2">
+                <span className="h-2 w-2 rounded-full" style={{ backgroundColor: eventKindMeta[draft.kind].color }} />
+                {eventKindMeta[draft.kind].label}
+              </span>
+              <ChevronDown className={cn("h-4 w-4 transition-transform", kindOpen && "rotate-180")} />
+            </button>
+            {kindOpen ? (
+              <div role="listbox" aria-label="Event type" className="neon-panel absolute left-0 right-0 top-[calc(100%+6px)] z-30 overflow-hidden rounded-xl p-1.5 shadow-floating">
+                {kinds.map((kind) => (
+                  <button
+                    key={kind}
+                    type="button"
+                    role="option"
+                    aria-selected={draft.kind === kind}
+                    onClick={() => { setDraft((current) => ({ ...current, kind })); setKindOpen(false); }}
+                    className={cn("flex w-full items-center gap-2 rounded-lg px-2.5 py-2 text-left text-xs text-foreground transition hover:bg-primary/10", draft.kind === kind && "bg-primary/12 text-primary")}
+                  >
+                    <span className="h-2 w-2 rounded-full" style={{ backgroundColor: eventKindMeta[kind].color }} />
+                    {eventKindMeta[kind].label}
+                    {draft.kind === kind ? <Check className="ml-auto h-3.5 w-3.5" /> : null}
+                  </button>
+                ))}
+              </div>
+            ) : null}
+          </div>
+          <div className="sm:col-span-2">
+            <div className="flex items-center justify-between text-[10px] text-muted-foreground">
+              <label htmlFor="event-invitees">Invite members</label>
+              <span>{draft.invitees.length} invited</span>
+            </div>
+            <div className="orion-glass-control mt-1.5 rounded-lg p-2">
+              <div className="flex flex-wrap gap-1.5">
+                {draft.invitees.map((email) => (
+                  <span key={email} className="inline-flex items-center gap-1 rounded-md bg-primary/12 px-2 py-1 text-[10px] text-primary">
+                    {email}
+                    <button type="button" aria-label={`Remove ${email}`} onClick={() => removeInvitee(email)} className="text-primary/80 hover:text-primary"><X className="h-3 w-3" /></button>
+                  </span>
+                ))}
+                <input
+                  id="event-invitees"
+                  value={inviteeInput}
+                  onChange={(e) => setInviteeInput(e.target.value)}
+                  onKeyDown={(e) => { if (e.key === "Enter" || e.key === ",") { e.preventDefault(); addInviteeInput(); } }}
+                  onBlur={addInviteeInput}
+                  placeholder="Add email or team name"
+                  className="min-w-44 flex-1 bg-transparent px-1 py-1 text-sm text-foreground outline-none placeholder:text-muted-foreground"
+                />
+              </div>
+            </div>
+            <div className="mt-1.5 flex flex-wrap gap-1.5">
+              {teamNames.map((team) => (
+                <button key={team} type="button" onClick={() => addInvitees([...teamInviteGroups[team]], `${team} (${teamInviteGroups[team].length} members)`)} className="rounded-full border border-border px-2 py-1 text-[9px] text-muted-foreground transition hover:border-primary/50 hover:text-primary">
+                  {team} · {teamInviteGroups[team].length}
+                </button>
               ))}
-            </select>
-          </label>
-          <label className="text-[10px] text-muted-foreground">
-            Attendees
-            <input
-              type="number"
-              min="1"
-              value={draft.attendees}
-              onChange={(e) =>
-                setDraft((d) => ({ ...d, attendees: Number(e.target.value) }))
-              }
-              className={field}
-            />
-          </label>
+            </div>
+          </div>
           <label className="text-[10px] text-muted-foreground">
             Location
             <input
@@ -324,11 +404,11 @@ function EventDialog({
               onChange={(e) =>
                 setDraft((d) => ({ ...d, notes: e.target.value }))
               }
-              className="orion-glass-control mt-1.5 min-h-20 w-full resize-none rounded-lg p-3 text-sm text-foreground outline-none"
+              className="orion-glass-control mt-1.5 min-h-16 w-full resize-none rounded-lg p-2.5 text-sm text-foreground outline-none"
             />
           </label>
         </div>
-        <footer className="mt-6 flex items-center justify-between">
+        <footer className="mt-4 flex items-center justify-between">
           <div>
             {event && onDelete ? (
               <button
@@ -535,12 +615,6 @@ function TimeGrid({
                       style={{
                         top: (event.startHour - HOURS[0]) * PX_PER_HOUR + 2,
                         height,
-                        // Solid colour spine down the left edge. The kind's
-                        // colour lives here and in the time row, so the body can
-                        // stay near-black and the title reads at full contrast
-                        // instead of through a wash.
-                        borderLeftWidth: 4,
-                        borderLeftColor: meta.color,
                         // Opaque base. Without it the now-line shows through the
                         // card and reads as a strike-through on the title.
                         backgroundColor: CARD_BASE,
@@ -561,9 +635,11 @@ function TimeGrid({
                       {/* Account and attendees share a row, which is what buys
                           the title its second line inside the same height. */}
                       <span className="mt-0.5 flex items-center gap-1">
-                        <span className="min-w-0 flex-1 truncate text-[11px] leading-[16px] text-muted-foreground">
-                          {event.account}
-                        </span>
+                        <CompanyBrand
+                          company={event.account}
+                          className="min-w-0 flex-1 gap-1.5 text-[11px] leading-[16px] text-muted-foreground"
+                          iconClassName="h-4 w-4 rounded-[3px]"
+                        />
                         <span className="flex shrink-0 items-center">
                           {Array.from({ length: faces }, (_, face) => (
                             <span
@@ -891,7 +967,6 @@ export function CalendarWorkspace() {
             className="flex h-9 shrink-0 items-center gap-2 rounded-lg px-3.5 text-[12px] font-semibold text-white transition hover:brightness-110 active:scale-[0.98]"
             style={{
               backgroundColor: ACCENT,
-              boxShadow: `0 6px 18px ${ACCENT}55`,
             }}
           >
             <Plus className="h-4 w-4" />
@@ -1109,8 +1184,13 @@ export function CalendarWorkspace() {
                         <span className="block text-[13px] font-medium text-foreground">
                           {event.title}
                         </span>
-                        <span className="text-[11px] text-muted-foreground">
-                          {event.account} · {event.location}
+                        <span className="flex items-center gap-1.5 text-[11px] text-muted-foreground">
+                          <CompanyBrand
+                            company={event.account}
+                            className="gap-1.5"
+                            iconClassName="h-4 w-4 rounded-[3px]"
+                          />
+                          · {event.location}
                         </span>
                       </span>
                       <span className="text-[11px] text-muted-foreground">
@@ -1191,9 +1271,11 @@ export function CalendarWorkspace() {
                           <span className="block truncate text-[12px] text-foreground">
                             {event.title}
                           </span>
-                          <span className="block truncate text-[11px] text-muted-foreground">
-                            {event.account}
-                          </span>
+                          <CompanyBrand
+                            company={event.account}
+                            className="gap-1.5 text-[11px] text-muted-foreground"
+                            iconClassName="h-4 w-4 rounded-[3px]"
+                          />
                         </span>
                         <span className="shrink-0 text-[11px] text-muted-foreground">
                           {durationLabel(event.duration)}
@@ -1274,9 +1356,9 @@ export function CalendarWorkspace() {
             </div>
             <div className="mt-3 space-y-2">
               {[
-                ["google", "G", "Google Calendar", "alex.morgan@orion.co"],
-                ["outlook", "O", "Outlook Calendar", "alex.morgan@orion.co"],
-              ].map(([id, icon, label, email]) => (
+                ["google", "Google Calendar", "alex.morgan@orion.co"],
+                ["outlook", "Microsoft Outlook", "alex.morgan@orion.co"],
+              ].map(([id, label, email]) => (
                 <button
                   key={id}
                   type="button"
@@ -1288,8 +1370,8 @@ export function CalendarWorkspace() {
                   }
                   className="flex w-full items-center gap-2.5 rounded-lg px-1 py-1 text-left transition hover:bg-foreground/[0.05]"
                 >
-                  <span className="grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-foreground/5 text-[12px] font-semibold text-primary">
-                    {icon}
+                  <span className="grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-white/[0.06] p-1.5">
+                    <Image src={`/integrations/${id}.svg`} alt={`${label} logo`} width={20} height={20} className="h-full w-full object-contain" />
                   </span>
                   <span className="min-w-0 flex-1">
                     <span className="block truncate text-[12px] text-foreground">

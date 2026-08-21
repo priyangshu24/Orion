@@ -10,6 +10,7 @@ export interface OrionCalendarEvent {
   duration: number;
   kind: CalendarEventKind;
   attendees: number;
+  invitees?: string[];
   location: string;
   notes: string;
 }
@@ -22,6 +23,7 @@ export interface CalendarEventDraft {
   duration: number;
   kind: CalendarEventKind;
   attendees: number;
+  invitees: string[];
   location: string;
   notes: string;
 }

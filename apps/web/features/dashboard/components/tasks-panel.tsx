@@ -133,7 +133,7 @@ export function TasksPanel() {
               autoFocus
               value={title}
               onChange={(event) => setTitle(event.target.value)}
-              placeholder="e.g. Follow up with Acme Corp"
+              placeholder="e.g. Follow up with Apple"
               className="orion-glass-control mt-1.5 h-10 w-full rounded-lg px-3 text-sm text-foreground outline-none placeholder:text-muted-foreground focus:border-primary/50"
             />
 

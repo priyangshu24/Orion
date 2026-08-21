@@ -14,7 +14,7 @@ export const knowledgeBases: KnowledgeBase[] = [
 export const intelDocuments: IntelDocument[] = [
   {
     id: "doc-msa-acme",
-    name: "Acme Corp — Master Services Agreement.pdf",
+    name: "Apple — Master Services Agreement.pdf",
     docType: "contract",
     mimeType: "application/pdf",
     sizeBytes: 2_411_520,
@@ -27,10 +27,10 @@ export const intelDocuments: IntelDocument[] = [
     language: "en",
     riskScore: 68,
     summary:
-      "Three-year MSA with Acme Corp covering platform licensing and support. Auto-renews annually unless terminated with 90 days' notice. Liability capped at 12 months of fees; uncapped for data-breach claims — flagged as above-standard exposure.",
+      "Three-year MSA with Apple covering platform licensing and support. Auto-renews annually unless terminated with 90 days' notice. Liability capped at 12 months of fees; uncapped for data-breach claims — flagged as above-standard exposure.",
     tags: ["msa", "auto-renewal", "liability", "acme"],
     entities: [
-      { id: "e1", type: "org", value: "Acme Corp", confidence: 0.99 },
+      { id: "e1", type: "org", value: "Apple", confidence: 0.99 },
       { id: "e2", type: "date", value: "2026-09-30 (renewal)", confidence: 0.97 },
       { id: "e3", type: "amount", value: "$240,000 / yr", confidence: 0.95 },
       { id: "e4", type: "obligation", value: "90-day termination notice", confidence: 0.93 },
@@ -119,7 +119,7 @@ export const intelDocuments: IntelDocument[] = [
   },
   {
     id: "doc-vendor-risk",
-    name: "Vendor Risk Assessment — Globex.xlsx",
+    name: "Vendor Risk Assessment — Google.xlsx",
     docType: "spreadsheet",
     mimeType: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
     sizeBytes: 254_976,
@@ -132,10 +132,10 @@ export const intelDocuments: IntelDocument[] = [
     language: "en",
     riskScore: 57,
     summary:
-      "Scored risk matrix for Globex Corporation across security, financial, and delivery dimensions. Overall risk medium-high driven by missing SOC 2 report and single-region hosting.",
+      "Scored risk matrix for Google across security, financial, and delivery dimensions. Overall risk medium-high driven by missing SOC 2 report and single-region hosting.",
     tags: ["vendor-risk", "globex", "soc2"],
     entities: [
-      { id: "e1", type: "org", value: "Globex Corporation", confidence: 0.99 },
+      { id: "e1", type: "org", value: "Google", confidence: 0.99 },
       { id: "e2", type: "obligation", value: "SOC 2 report outstanding", confidence: 0.9 },
     ],
   },
@@ -157,7 +157,7 @@ export const intelDocuments: IntelDocument[] = [
   },
   {
     id: "doc-initech-renewal",
-    name: "Renewal Terms — Initech.eml",
+    name: "Renewal Terms — Microsoft.eml",
     docType: "email",
     mimeType: "message/rfc822",
     sizeBytes: 96_256,
@@ -170,10 +170,10 @@ export const intelDocuments: IntelDocument[] = [
     language: "en",
     riskScore: 21,
     summary:
-      "Email thread confirming Initech renewal at current pricing with a 5% uplift cap for 2027. Attachment contains the countersigned amendment.",
+      "Email thread confirming Microsoft renewal at current pricing with a 5% uplift cap for 2027. Attachment contains the countersigned amendment.",
     tags: ["renewal", "initech", "amendment"],
     entities: [
-      { id: "e1", type: "org", value: "Initech LLC", confidence: 0.98 },
+      { id: "e1", type: "org", value: "Microsoft", confidence: 0.98 },
       { id: "e2", type: "obligation", value: "5% uplift cap for 2027", confidence: 0.91 },
     ],
     deadlines: [{ label: "Countersign amendment", date: "2026-07-15" }],
@@ -219,7 +219,7 @@ export const mockSearchHits: SearchHit[] = [
   {
     id: "hit-1",
     documentId: "doc-msa-acme",
-    documentName: "Acme Corp — Master Services Agreement.pdf",
+    documentName: "Apple — Master Services Agreement.pdf",
     docType: "contract",
     page: 31,
     sectionPath: "9 > 9.2 > Limitation of Liability",
@@ -230,7 +230,7 @@ export const mockSearchHits: SearchHit[] = [
   {
     id: "hit-2",
     documentId: "doc-msa-acme",
-    documentName: "Acme Corp — Master Services Agreement.pdf",
+    documentName: "Apple — Master Services Agreement.pdf",
     docType: "contract",
     page: 12,
     sectionPath: "4 > 4.1 > Term and Renewal",
@@ -241,7 +241,7 @@ export const mockSearchHits: SearchHit[] = [
   {
     id: "hit-3",
     documentId: "doc-initech-renewal",
-    documentName: "Renewal Terms — Initech.eml",
+    documentName: "Renewal Terms — Microsoft.eml",
     docType: "email",
     page: 1,
     sectionPath: "Thread > Re: 2027 Renewal",
@@ -283,19 +283,19 @@ export const cannedAnswers: CannedAnswer[] = [
   {
     keywords: ["renew", "renewal", "expire", "notice", "terminate"],
     answer:
-      "You have two active renewal situations.\n\nThe Acme Corp MSA auto-renews on September 30, 2026 for another one-year term. To exit or renegotiate, written notice is required 90 days before renewal — that deadline is July 2, 2026, which is today. Given the liability exposure flagged in section 9.2, I'd recommend opening the renegotiation now.\n\nInitech has already agreed to renew at current pricing with a 5% uplift cap for 2027. The countersigned amendment is due back by July 15, 2026.",
+      "You have two active renewal situations.\n\nThe Apple MSA auto-renews on September 30, 2026 for another one-year term. To exit or renegotiate, written notice is required 90 days before renewal — that deadline is July 2, 2026, which is today. Given the liability exposure flagged in section 9.2, I'd recommend opening the renegotiation now.\n\nMicrosoft has already agreed to renew at current pricing with a 5% uplift cap for 2027. The countersigned amendment is due back by July 15, 2026.",
     citations: [
-      { index: 1, documentId: "doc-msa-acme", documentName: "Acme Corp — Master Services Agreement.pdf", page: 12, quote: "automatically renew … unless written notice … ninety (90) days prior" },
-      { index: 2, documentId: "doc-initech-renewal", documentName: "Renewal Terms — Initech.eml", page: 1, quote: "uplift capped at 5% for the 2027 term" },
+      { index: 1, documentId: "doc-msa-acme", documentName: "Apple — Master Services Agreement.pdf", page: 12, quote: "automatically renew … unless written notice … ninety (90) days prior" },
+      { index: 2, documentId: "doc-initech-renewal", documentName: "Renewal Terms — Microsoft.eml", page: 1, quote: "uplift capped at 5% for the 2027 term" },
     ],
   },
   {
     keywords: ["liab", "cap", "risk", "exposure", "indemn"],
     answer:
-      "The main liability exposure in your portfolio is the Acme Corp MSA.\n\nGeneral liability is capped at 12 months of fees (about $240,000), but the cap does not apply to data-protection breaches under Section 7 — that's uncapped exposure and above market standard. Combined with the auto-renewal clause, this drives the document's 68/100 risk score.\n\nBy comparison, the Northwind contract scores 34/100 with no unusual clauses, and Globex's vendor assessment is medium-high mainly due to a missing SOC 2 report, not contractual terms.",
+      "The main liability exposure in your portfolio is the Apple MSA.\n\nGeneral liability is capped at 12 months of fees (about $240,000), but the cap does not apply to data-protection breaches under Section 7 — that's uncapped exposure and above market standard. Combined with the auto-renewal clause, this drives the document's 68/100 risk score.\n\nBy comparison, the Northwind contract scores 34/100 with no unusual clauses, and Google's vendor assessment is medium-high mainly due to a missing SOC 2 report, not contractual terms.",
     citations: [
-      { index: 1, documentId: "doc-msa-acme", documentName: "Acme Corp — Master Services Agreement.pdf", page: 31, quote: "no cap shall apply to losses arising from a breach of Section 7 (Data Protection)" },
-      { index: 2, documentId: "doc-vendor-risk", documentName: "Vendor Risk Assessment — Globex.xlsx", page: 2, quote: "SOC 2 report outstanding; single-region hosting" },
+      { index: 1, documentId: "doc-msa-acme", documentName: "Apple — Master Services Agreement.pdf", page: 31, quote: "no cap shall apply to losses arising from a breach of Section 7 (Data Protection)" },
+      { index: 2, documentId: "doc-vendor-risk", documentName: "Vendor Risk Assessment — Google.xlsx", page: 2, quote: "SOC 2 report outstanding; single-region hosting" },
     ],
   },
   {
@@ -320,8 +320,8 @@ export const cannedAnswers: CannedAnswer[] = [
 export const fallbackAnswer: CannedAnswer = {
   keywords: [],
   answer:
-    "Based on the 7 indexed documents in your workspace, I can help with contract terms, renewal deadlines, vendor spend, and policy questions.\n\nThe most time-sensitive item right now: the Acme Corp MSA termination-notice deadline is today (July 2, 2026). There's also an Initech amendment awaiting countersignature by July 15, and a CloudScale invoice due July 28.\n\nAsk me something specific — for example, \"What's our liability exposure with Acme?\" or \"Which invoices are due this month?\"",
+    "Based on the 7 indexed documents in your workspace, I can help with contract terms, renewal deadlines, vendor spend, and policy questions.\n\nThe most time-sensitive item right now: the Apple MSA termination-notice deadline is today (July 2, 2026). There's also an Microsoft amendment awaiting countersignature by July 15, and a CloudScale invoice due July 28.\n\nAsk me something specific — for example, \"What's our liability exposure with Apple?\" or \"Which invoices are due this month?\"",
   citations: [
-    { index: 1, documentId: "doc-msa-acme", documentName: "Acme Corp — Master Services Agreement.pdf", page: 12, quote: "written notice of non-renewal at least ninety (90) days prior" },
+    { index: 1, documentId: "doc-msa-acme", documentName: "Apple — Master Services Agreement.pdf", page: 12, quote: "written notice of non-renewal at least ninety (90) days prior" },
   ],
 };

@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useRef, useState, type FormEvent, type ReactNode } from "react";
+import { startTransition, useEffect, useMemo, useRef, useState, type FormEvent, type ReactNode } from "react";
 import { useSearchParams } from "next/navigation";
 import {
   Activity,
@@ -19,12 +19,14 @@ import {
   Settings2,
   Star,
   TrendingUp,
+  Upload,
   UserRound,
   UsersRound,
   X,
 } from "lucide-react";
 import { toast } from "sonner";
 import { Avatar, AvatarFallback } from "@/shared/components/ui/avatar";
+import { CompanyBrand, companyLogoStorageKey } from "@/shared/components/company-brand";
 import { cn, formatDate, getInitials } from "@/shared/lib/utils";
 import { mockCompanies, mockContacts } from "../constants/mock-relationships";
 import type { CompanyDraft, CompanyRecord, ContactDraft, ContactRecord, ContactStatus, RelationshipView } from "../types";
@@ -37,6 +39,18 @@ const statusStyle: Record<ContactStatus, string> = {
   partner: "border-violet-500/25 bg-violet-500/10 text-violet-300",
 };
 type Selection = { kind: RelationshipView; id: string } | null;
+const contactsStorageKey = "orion-crm-contacts";
+const companiesStorageKey = "orion-crm-companies";
+
+function loadRecords<T>(storageKey: string, fallback: T[]) {
+  if (typeof window === "undefined") return fallback;
+  try {
+    const value = JSON.parse(localStorage.getItem(storageKey) ?? "null");
+    return Array.isArray(value) ? value as T[] : fallback;
+  } catch {
+    return fallback;
+  }
+}
 
 function money(value: number) {
   return new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0, notation: "compact" }).format(value);
@@ -103,6 +117,29 @@ function CompanyProfilePanel({ company, contacts, followed, onFollow, onClose, o
   const [noteOpen, setNoteOpen] = useState(false);
   const [note, setNote] = useState("");
   const [menuOpen, setMenuOpen] = useState(false);
+  const logoInputRef = useRef<HTMLInputElement>(null);
+  const [uploadedLogo, setUploadedLogo] = useState<string | null>(null);
+
+  useEffect(() => {
+    const storedLogo = localStorage.getItem(companyLogoStorageKey(company.name));
+    startTransition(() => setUploadedLogo(storedLogo));
+  }, [company.name]);
+
+  function uploadLogo(file?: File) {
+    if (!file) return;
+    if (!file.type.startsWith("image/")) return toast.error("Choose a PNG, JPG, WebP, or SVG logo");
+    if (file.size > 2 * 1024 * 1024) return toast.error("Logo must be 2 MB or smaller");
+    const reader = new FileReader();
+    reader.onload = () => {
+      const logo = typeof reader.result === "string" ? reader.result : null;
+      if (!logo) return;
+      localStorage.setItem(companyLogoStorageKey(company.name), logo);
+      window.dispatchEvent(new Event("orion-company-logo-updated"));
+      setUploadedLogo(logo);
+      toast.success("Company logo uploaded");
+    };
+    reader.readAsDataURL(file);
+  }
 
   function submitNote(event: FormEvent) {
     event.preventDefault();
@@ -126,7 +163,7 @@ function CompanyProfilePanel({ company, contacts, followed, onFollow, onClose, o
   ];
 
   return <div className="fixed inset-0 z-40 bg-black/45 backdrop-blur-[2px]" role="presentation" onMouseDown={(event) => { if (event.target === event.currentTarget) onClose(); }}><aside aria-label={`${company.name} details`} className="neon-panel absolute bottom-3 right-3 top-3 flex w-[460px] max-w-[calc(100vw-24px)] flex-col overflow-hidden rounded-2xl shadow-floating">
-    <header className="px-5 pt-5"><div className="flex items-start gap-3"><Avatar className="h-12 w-12 rounded-lg border border-primary/20"><AvatarFallback className="rounded-lg bg-gradient-to-br from-slate-500/50 to-primary/10 text-sm font-semibold text-foreground">{company.name[0]}</AvatarFallback></Avatar><div className="min-w-0 flex-1"><h2 className="truncate text-base font-semibold text-foreground">{company.name}</h2><div className="mt-1 flex flex-wrap items-center gap-2"><StatusBadge status={company.status} /><span className="text-[8px] text-muted-foreground">Since {formatDate(company.createdAt)}</span></div></div><button type="button" onClick={onFollow} aria-pressed={followed} className={cn("flex h-8 items-center gap-1.5 rounded-lg border px-2.5 text-[9px]", followed ? "border-primary/30 bg-primary/10 text-primary" : "border-border text-muted-foreground")}><Star className={cn("h-3 w-3", followed && "fill-current")} />{followed ? "Following" : "Follow"}</button><button type="button" aria-label="Close" onClick={onClose} className="grid h-8 w-8 place-items-center rounded-lg text-muted-foreground hover:bg-foreground/[0.06] hover:text-foreground"><X className="h-4 w-4" /></button></div>
+    <header className="px-5 pt-5"><div className="flex items-start gap-3"><input ref={logoInputRef} type="file" accept="image/png,image/jpeg,image/webp,image/svg+xml" className="hidden" onChange={(event) => { uploadLogo(event.target.files?.[0]); event.target.value = ""; }} /><button type="button" onClick={() => logoInputRef.current?.click()} aria-label={`Upload logo for ${company.name}`} title="Upload company logo" className="group relative shrink-0 rounded-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/70">{uploadedLogo ? <img src={uploadedLogo} alt={`${company.name} logo`} className="h-12 w-12 rounded-lg border border-primary/20 bg-white object-contain p-1" /> : <CompanyBrand company={company.name} domain={company.website} showName={false} iconClassName="h-12 w-12 rounded-lg border border-primary/20 p-1.5" />}<span className="absolute inset-0 grid place-items-center rounded-lg bg-black/55 opacity-0 transition-opacity group-hover:opacity-100"><Upload className="h-4 w-4 text-white" /></span></button><div className="min-w-0 flex-1"><h2 className="truncate text-base font-semibold text-foreground">{company.name}</h2><div className="mt-1 flex flex-wrap items-center gap-2"><StatusBadge status={company.status} /><span className="text-[8px] text-muted-foreground">Since {formatDate(company.createdAt)}</span><button type="button" onClick={() => logoInputRef.current?.click()} className="text-[8px] text-primary hover:underline">Upload logo</button></div></div><button type="button" onClick={onFollow} aria-pressed={followed} className={cn("flex h-8 items-center gap-1.5 rounded-lg border px-2.5 text-[9px]", followed ? "border-primary/30 bg-primary/10 text-primary" : "border-border text-muted-foreground")}><Star className={cn("h-3 w-3", followed && "fill-current")} />{followed ? "Following" : "Follow"}</button><button type="button" aria-label="Close" onClick={onClose} className="grid h-8 w-8 place-items-center rounded-lg text-muted-foreground hover:bg-foreground/[0.06] hover:text-foreground"><X className="h-4 w-4" /></button></div>
     <div className="relative mt-4 flex gap-2">{[[UserRound, "Contact"], [Mail, "Email"], [Phone, "Call"], [MessageSquareText, "Note"]].map(([Icon, label]) => <button key={label as string} type="button" onClick={() => label === "Note" ? setNoteOpen(true) : toast.success(`${label as string} action started for ${company.name}`)} className="grid w-12 place-items-center gap-1 rounded-lg border border-border bg-foreground/[0.02] py-2 text-[8px] text-muted-foreground hover:border-primary/25 hover:text-primary"><Icon className="h-3.5 w-3.5" />{label as string}</button>)}<button type="button" aria-label="More" aria-expanded={menuOpen} onClick={() => setMenuOpen((open) => !open)} className="grid w-12 place-items-center gap-1 rounded-lg border border-border bg-foreground/[0.02] py-2 text-[8px] text-muted-foreground hover:border-primary/25 hover:text-primary"><EllipsisVertical className="h-3.5 w-3.5" />More</button>{menuOpen ? <div className="absolute right-0 top-12 z-30 w-36 rounded-lg border border-border bg-popover/95 p-1 shadow-floating backdrop-blur-xl"><button type="button" onClick={onEdit} className="block w-full rounded-md px-2.5 py-2 text-left text-[9px] text-foreground hover:bg-foreground/[0.06]">Edit company</button><button type="button" onClick={onDelete} className="block w-full rounded-md px-2.5 py-2 text-left text-[9px] text-destructive hover:bg-destructive/10">Delete company</button></div> : null}</div></header>
     <nav className="mt-4 flex border-b border-border px-4">{tabs.map((item) => <button key={item.id} type="button" onClick={() => setTab(item.id)} className={cn("whitespace-nowrap border-b-2 px-2 py-3 text-[8px]", tab === item.id ? "border-primary text-foreground" : "border-transparent text-muted-foreground")}>{item.label}</button>)}</nav>
     <div className="min-h-0 flex-1 overflow-y-auto p-4">{tab === "overview" ? <div className="space-y-4"><div className="grid grid-cols-[1.05fr_.95fr] gap-3"><dl className="space-y-3 px-1 text-[9px]">{[["Industry", company.industry], ["Company Size", company.size], ["Revenue", company.revenue], ["Website", company.website], ["Phone", company.phone], ["Headquarters", company.headquarters]].map(([label, value]) => <div key={label} className="grid grid-cols-[76px_1fr] gap-2"><dt className="text-muted-foreground">{label}</dt><dd className={cn("break-words text-foreground", label === "Website" && "text-primary")}>{value}</dd></div>)}<div className="grid grid-cols-[76px_1fr] items-center gap-2"><dt className="text-muted-foreground">Owner</dt><dd className="flex items-center gap-2 text-foreground"><Avatar className="h-5 w-5"><AvatarFallback className="text-[7px]">{getInitials(company.owner)}</AvatarFallback></Avatar>{company.owner}</dd></div><div className="grid grid-cols-[76px_1fr] gap-2"><dt className="pt-1 text-muted-foreground">Tags</dt><dd className="flex flex-wrap gap-1">{company.tags.map((tag) => <span key={tag} className="rounded-full border border-emerald-400/20 bg-emerald-400/10 px-2 py-1 text-[7px] text-emerald-300">{tag}</span>)}</dd></div></dl>
@@ -172,6 +209,7 @@ export function RelationshipsWorkspace({ initialView = "contacts" }: { initialVi
   const [view, setView] = useState<RelationshipView>(initialView);
   const [contacts, setContacts] = useState(mockContacts);
   const [companies, setCompanies] = useState(mockCompanies);
+  const [storageHydrated, setStorageHydrated] = useState(false);
   const [selection, setSelection] = useState<Selection>(() => searchParams.get("contact") ? { kind: "contacts", id: searchParams.get("contact")! } : searchParams.get("company") ? { kind: "companies", id: searchParams.get("company")! } : null);
   const [dialog, setDialog] = useState<{ kind: RelationshipView; id?: string } | null>(null);
   const [query, setQuery] = useState("");
@@ -181,6 +219,17 @@ export function RelationshipsWorkspace({ initialView = "contacts" }: { initialVi
   const [page, setPage] = useState(1);
   const [followed, setFollowed] = useState<Set<string>>(() => new Set());
   const importRef = useRef<HTMLInputElement>(null);
+  useEffect(() => {
+    const persistedContacts = loadRecords(contactsStorageKey, mockContacts);
+    const persistedCompanies = loadRecords(companiesStorageKey, mockCompanies);
+    startTransition(() => {
+      setContacts(persistedContacts);
+      setCompanies(persistedCompanies);
+      setStorageHydrated(true);
+    });
+  }, []);
+  useEffect(() => { if (storageHydrated) localStorage.setItem(contactsStorageKey, JSON.stringify(contacts)); }, [contacts, storageHydrated]);
+  useEffect(() => { if (storageHydrated) localStorage.setItem(companiesStorageKey, JSON.stringify(companies)); }, [companies, storageHydrated]);
   const companyMap = useMemo(() => new Map(companies.map((item) => [item.id, item])), [companies]);
   const filtered = useMemo(() => {
     const normalized = query.trim().toLowerCase();
@@ -201,7 +250,31 @@ export function RelationshipsWorkspace({ initialView = "contacts" }: { initialVi
       toast.success(dialog.id ? "Contact updated" : "Contact added");
     } else {
       const value = draft as CompanyDraft;
-      setCompanies((current) => dialog?.id ? current.map((item) => item.id === dialog.id ? { ...item, ...value } : item) : [{ ...value, id: `co-${Date.now()}`, revenue: "Not set", score: 50, deals: 0, dealValue: 0, tags: ["New"], createdAt: new Date().toISOString().slice(0, 10), notes: [] }, ...current]);
+      const name = value.name.trim();
+      if (!dialog?.id && companies.some((item) => item.name.localeCompare(name, undefined, { sensitivity: "accent" }) === 0)) {
+        toast.error("A company with this name already exists");
+        return;
+      }
+      const newCompany: CompanyRecord = {
+        ...value,
+        name,
+        website: value.website.trim(),
+        phone: value.phone.trim(),
+        headquarters: value.headquarters.trim(),
+        id: `co-${Date.now()}`,
+        revenue: "Not set",
+        score: 50,
+        deals: 0,
+        dealValue: 0,
+        tags: ["New"],
+        createdAt: new Date().toISOString().slice(0, 10),
+        notes: [],
+      };
+      setCompanies((current) => dialog?.id ? current.map((item) => item.id === dialog.id ? { ...item, ...value, name, website: value.website.trim(), phone: value.phone.trim(), headquarters: value.headquarters.trim() } : item) : [newCompany, ...current]);
+      setView("companies");
+      setQuery("");
+      setOwner("all");
+      setStatus("all");
       toast.success(dialog?.id ? "Company updated" : "Company added");
     }
     setDialog(null); setPage(1);
@@ -219,11 +292,11 @@ export function RelationshipsWorkspace({ initialView = "contacts" }: { initialVi
     toast.success("Note added");
   }
 
-  return <div className="space-y-3"><header className="flex flex-wrap items-start justify-between gap-3"><div><h1 className="text-xl font-semibold tracking-tight text-foreground">Contacts &amp; Companies</h1><p className="mt-0.5 text-[11px] text-muted-foreground">Manage your relationships and build stronger connections.</p></div><div className="flex flex-wrap gap-2"><input ref={importRef} type="file" accept=".csv" className="hidden" onChange={(e) => { if (e.target.files?.[0]) toast.success(`${e.target.files[0].name} queued for validation`); e.target.value = ""; }} /><button type="button" onClick={() => importRef.current?.click()} className="orion-glass-control flex h-8 items-center gap-2 rounded-lg px-3 text-[10px]"><Download className="h-3.5 w-3.5" />Import</button><button type="button" onClick={() => setDialog({ kind: "contacts" })} className="orion-glass-control flex h-8 items-center gap-2 rounded-lg px-3 text-[10px]"><UserRound className="h-3.5 w-3.5" />Add Contact</button><button type="button" onClick={() => setDialog({ kind: "companies" })} className="orion-add-widget flex h-8 items-center gap-2 rounded-lg px-3 text-[10px] font-semibold"><Building2 className="h-3.5 w-3.5" />Add Company</button></div></header>
-  <nav className="flex border-b border-border"><button type="button" onClick={() => changeView("contacts")} className={cn("border-b-2 px-1 py-2.5 text-[10px]", view === "contacts" ? "border-primary text-primary" : "border-transparent text-muted-foreground")}>All Contacts</button><button type="button" onClick={() => changeView("companies")} className={cn("ml-7 border-b-2 px-1 py-2.5 text-[10px]", view === "companies" ? "border-primary text-primary" : "border-transparent text-muted-foreground")}>All Companies</button></nav>
+  return <div className="space-y-3"><header><h1 className="text-xl font-semibold tracking-tight text-foreground">Contacts &amp; Companies</h1><p className="mt-0.5 text-[11px] text-muted-foreground">Manage your relationships and build stronger connections.</p></header>
+  <nav className="flex flex-wrap items-end justify-between gap-3 border-b border-border"><div className="flex"><button type="button" onClick={() => changeView("contacts")} className={cn("border-b-2 px-1 py-2.5 text-[10px]", view === "contacts" ? "border-primary text-primary" : "border-transparent text-muted-foreground")}>All Contacts</button><button type="button" onClick={() => changeView("companies")} className={cn("ml-7 border-b-2 px-1 py-2.5 text-[10px]", view === "companies" ? "border-primary text-primary" : "border-transparent text-muted-foreground")}>All Companies</button></div><div className="mb-2 flex flex-wrap gap-2"><input ref={importRef} type="file" accept=".csv" className="hidden" onChange={(e) => { if (e.target.files?.[0]) toast.success(`${e.target.files[0].name} queued for validation`); e.target.value = ""; }} /><button type="button" onClick={() => importRef.current?.click()} className="orion-glass-control flex h-8 items-center gap-2 rounded-lg px-3 text-[10px]"><Download className="h-3.5 w-3.5" />Import</button><button type="button" onClick={() => setDialog({ kind: "contacts" })} className="orion-glass-control flex h-8 items-center gap-2 rounded-lg px-3 text-[10px]"><UserRound className="h-3.5 w-3.5" />Add Contact</button><button type="button" onClick={() => setDialog({ kind: "companies" })} className="orion-add-widget flex h-8 items-center gap-2 rounded-lg px-3 text-[10px] font-semibold"><Building2 className="h-3.5 w-3.5" />Add Company</button></div></nav>
   <section className="grid grid-cols-2 gap-3 lg:grid-cols-4"><MetricCard label="Total Contacts" value="2,847" delta="8.6%" icon={UsersRound} /><MetricCard label="My Contacts" value="1,250" delta="5.4%" icon={UserRound} /><MetricCard label="Total Companies" value="1,065" delta="6.8%" icon={Building2} /><MetricCard label="New This Month" value="186" delta="12.8%" icon={TrendingUp} gold /></section>
   <section className="orion-panel overflow-visible"><div className="flex flex-wrap items-center gap-2 border-b border-border p-3"><label className="orion-glass-control flex h-8 min-w-52 flex-1 items-center gap-2 rounded-lg px-3"><Search className="h-3.5 w-3.5 text-muted-foreground" /><input aria-label={`Search ${view}`} value={query} onChange={(e) => { setQuery(e.target.value); setPage(1); }} placeholder={`Search ${view}...`} className="min-w-0 flex-1 bg-transparent text-[10px] text-foreground outline-none" /></label><select aria-label="Owner filter" value={owner} onChange={(e) => { setOwner(e.target.value); setPage(1); }} className="orion-glass-control h-8 rounded-lg px-2 text-[10px]"><option value="all">All owners</option>{owners.map((item) => <option key={item}>{item}</option>)}</select>{view === "contacts" ? <select aria-label="Company filter" value={companyFilter} onChange={(e) => { setCompanyFilter(e.target.value); setPage(1); }} className="orion-glass-control h-8 rounded-lg px-2 text-[10px]"><option value="all">All companies</option>{companies.map((item) => <option key={item.id} value={item.id}>{item.name}</option>)}</select> : null}<select aria-label="Relationship filter" value={status} onChange={(e) => { setStatus(e.target.value as ContactStatus | "all"); setPage(1); }} className="orion-glass-control h-8 rounded-lg px-2 text-[10px]"><option value="all">All relationships</option>{statuses.map((item) => <option key={item} value={item}>{item}</option>)}</select><button type="button" aria-label="Table settings" onClick={() => toast.info("Table preferences are ready to customize")} className="orion-glass-control grid h-8 w-8 place-items-center rounded-lg"><Settings2 className="h-3.5 w-3.5" /></button></div>
-  <div className="overflow-x-auto"><table className="w-full min-w-[900px] text-left"><thead><tr className="border-b border-border bg-foreground/[0.02] text-[9px] text-muted-foreground">{view === "contacts" ? <><th className="px-4 py-3">Contact</th><th>Company</th><th>Email</th><th>Phone</th><th>Owner</th><th>Relationship</th><th>Last Contacted</th></> : <><th className="px-4 py-3">Company</th><th>Industry</th><th>Contacts</th><th>Open Deals</th><th>Pipeline</th><th>Owner</th><th>Relationship</th></>}<th className="w-12 px-4 text-right">Actions</th></tr></thead><tbody>{view === "contacts" ? (pageItems as ContactRecord[]).map((item) => { const company = companyMap.get(item.companyId); return <tr key={item.id} className="border-b border-border/60 text-[10px] hover:bg-foreground/[0.025]"><td className="px-4 py-2.5"><button type="button" onClick={() => setSelection({ kind: "contacts", id: item.id })} className="flex items-center gap-2 text-left"><Avatar className="h-8 w-8"><AvatarFallback className="text-[9px]">{getInitials(item.name)}</AvatarFallback></Avatar><span><span className="block font-medium text-foreground">{item.name}</span><span className="text-[9px] text-muted-foreground">{item.title}</span></span></button></td><td><button type="button" onClick={() => company && setSelection({ kind: "companies", id: company.id })} className="flex items-center gap-2 text-foreground hover:text-primary"><Building2 className="h-3.5 w-3.5 text-primary" />{company?.name ?? "Unassigned"}</button></td><td className="text-muted-foreground">{item.email}</td><td className="text-muted-foreground">{item.phone}</td><td><Avatar className="h-6 w-6" title={item.owner}><AvatarFallback className="text-[8px]">{getInitials(item.owner)}</AvatarFallback></Avatar></td><td><StatusBadge status={item.status} /></td><td className="text-muted-foreground">{item.lastContacted}</td><td className="px-4 text-right"><button type="button" aria-label={`Actions for ${item.name}`} onClick={() => setSelection({ kind: "contacts", id: item.id })} className="text-muted-foreground"><EllipsisVertical className="h-4 w-4" /></button></td></tr> }) : (pageItems as CompanyRecord[]).map((item) => <tr key={item.id} className="border-b border-border/60 text-[10px] hover:bg-foreground/[0.025]"><td className="px-4 py-3"><button type="button" onClick={() => setSelection({ kind: "companies", id: item.id })} className="flex items-center gap-2 font-medium text-foreground hover:text-primary"><span className="grid h-7 w-7 place-items-center rounded-md border border-primary/15 bg-primary/10 text-primary">{item.name[0]}</span>{item.name}</button></td><td className="text-muted-foreground">{item.industry}</td><td>{contacts.filter((contact) => contact.companyId === item.id).length}</td><td>{item.deals}</td><td className="font-medium text-foreground">{money(item.dealValue)}</td><td><Avatar className="h-6 w-6" title={item.owner}><AvatarFallback className="text-[8px]">{getInitials(item.owner)}</AvatarFallback></Avatar></td><td><StatusBadge status={item.status} /></td><td className="px-4 text-right"><button type="button" aria-label={`Actions for ${item.name}`} onClick={() => setSelection({ kind: "companies", id: item.id })} className="text-muted-foreground"><EllipsisVertical className="h-4 w-4" /></button></td></tr>)}</tbody></table>{pageItems.length === 0 ? <div className="grid min-h-48 place-items-center text-center"><div><Search className="mx-auto h-7 w-7 text-muted-foreground" /><p className="mt-2 text-sm text-foreground">No {view} found</p><p className="text-xs text-muted-foreground">Try adjusting your search or filters.</p></div></div> : null}</div>
+  <div className="overflow-x-auto"><table className="w-full min-w-[900px] text-left"><thead><tr className="border-b border-border bg-foreground/[0.02] text-[9px] text-muted-foreground">{view === "contacts" ? <><th className="px-4 py-3">Contact</th><th>Company</th><th>Email</th><th>Phone</th><th>Owner</th><th>Relationship</th><th>Last Contacted</th></> : <><th className="px-4 py-3">Company</th><th>Industry</th><th>Contacts</th><th>Open Deals</th><th>Pipeline</th><th>Owner</th><th>Relationship</th></>}<th className="w-12 px-4 text-right">Actions</th></tr></thead><tbody>{view === "contacts" ? (pageItems as ContactRecord[]).map((item) => { const company = companyMap.get(item.companyId); return <tr key={item.id} className="border-b border-border/60 text-[10px] hover:bg-foreground/[0.025]"><td className="px-4 py-2.5"><button type="button" onClick={() => setSelection({ kind: "contacts", id: item.id })} className="flex items-center gap-2 text-left"><Avatar className="h-8 w-8"><AvatarFallback className="text-[9px]">{getInitials(item.name)}</AvatarFallback></Avatar><span><span className="block font-medium text-foreground">{item.name}</span><span className="text-[9px] text-muted-foreground">{item.title}</span></span></button></td><td><button type="button" onClick={() => company && setSelection({ kind: "companies", id: company.id })} className="flex items-center gap-2 text-foreground hover:text-primary">{company ? <CompanyBrand company={company.name} /> : "Unassigned"}</button></td><td className="text-muted-foreground">{item.email}</td><td className="text-muted-foreground">{item.phone}</td><td><Avatar className="h-6 w-6" title={item.owner}><AvatarFallback className="text-[8px]">{getInitials(item.owner)}</AvatarFallback></Avatar></td><td><StatusBadge status={item.status} /></td><td className="text-muted-foreground">{item.lastContacted}</td><td className="px-4 text-right"><button type="button" aria-label={`Actions for ${item.name}`} onClick={() => setSelection({ kind: "contacts", id: item.id })} className="text-muted-foreground"><EllipsisVertical className="h-4 w-4" /></button></td></tr> }) : (pageItems as CompanyRecord[]).map((item) => <tr key={item.id} className="border-b border-border/60 text-[10px] hover:bg-foreground/[0.025]"><td className="px-4 py-3"><button type="button" onClick={() => setSelection({ kind: "companies", id: item.id })} className="flex items-center gap-2 font-medium text-foreground hover:text-primary"><CompanyBrand company={item.name} /></button></td><td className="text-muted-foreground">{item.industry}</td><td>{contacts.filter((contact) => contact.companyId === item.id).length}</td><td>{item.deals}</td><td className="font-medium text-foreground">{money(item.dealValue)}</td><td><Avatar className="h-6 w-6" title={item.owner}><AvatarFallback className="text-[8px]">{getInitials(item.owner)}</AvatarFallback></Avatar></td><td><StatusBadge status={item.status} /></td><td className="px-4 text-right"><button type="button" aria-label={`Actions for ${item.name}`} onClick={() => setSelection({ kind: "companies", id: item.id })} className="text-muted-foreground"><EllipsisVertical className="h-4 w-4" /></button></td></tr>)}</tbody></table>{pageItems.length === 0 ? <div className="grid min-h-48 place-items-center text-center"><div><Search className="mx-auto h-7 w-7 text-muted-foreground" /><p className="mt-2 text-sm text-foreground">No {view} found</p><p className="text-xs text-muted-foreground">Try adjusting your search or filters.</p></div></div> : null}</div>
   <footer className="flex flex-wrap items-center justify-between gap-3 px-4 py-3 text-[10px] text-muted-foreground"><p>Showing {filtered.length ? (Math.min(page, pageCount) - 1) * pageSize + 1 : 0} to {Math.min(Math.min(page, pageCount) * pageSize, filtered.length)} of {filtered.length} {view}</p><div className="flex items-center gap-1"><button type="button" aria-label="Previous page" disabled={page <= 1} onClick={() => setPage((value) => Math.max(1, value - 1))} className="grid h-7 w-7 place-items-center rounded-lg border border-border disabled:opacity-40"><ChevronLeft className="h-3.5 w-3.5" /></button>{Array.from({ length: pageCount }, (_, index) => index + 1).map((value) => <button key={value} type="button" onClick={() => setPage(value)} aria-current={value === Math.min(page, pageCount) ? "page" : undefined} className={cn("h-7 min-w-7 rounded-lg", value === Math.min(page, pageCount) ? "border border-primary/30 bg-primary/10 text-primary" : "text-muted-foreground")}>{value}</button>)}<button type="button" aria-label="Next page" disabled={page >= pageCount} onClick={() => setPage((value) => Math.min(pageCount, value + 1))} className="grid h-7 w-7 place-items-center rounded-lg border border-border disabled:opacity-40"><ChevronRight className="h-3.5 w-3.5" /></button></div></footer></section>
   {selection ? <DetailsPanel selection={selection} contacts={contacts} companies={companies} followed={followed} onFollow={() => setFollowed((current) => { const next = new Set(current); if (next.has(selection.id)) next.delete(selection.id); else next.add(selection.id); return next; })} onClose={() => setSelection(null)} onEdit={() => setDialog(selection)} onDelete={deleteSelection} onSelect={setSelection} onAddNote={addNote} onStatusChange={(nextStatus) => { if (selection.kind !== "contacts") return; setContacts((current) => current.map((item) => item.id === selection.id ? { ...item, status: nextStatus } : item)); toast.success("Contact status updated"); }} /> : null}
   {dialog ? <RecordDialog kind={dialog.kind} companies={companies} contact={selectedContact} company={selectedCompany} onClose={() => setDialog(null)} onSave={saveRecord} /> : null}</div>;

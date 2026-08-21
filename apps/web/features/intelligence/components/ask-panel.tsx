@@ -9,7 +9,7 @@ import { pill } from "./meta";
 
 const starters = [
   "What renewals are coming up?",
-  "What's our liability exposure with Acme?",
+  "What's our liability exposure with Apple?",
   "Which invoices are due this month?",
   "Summarize our data retention rules",
 ];

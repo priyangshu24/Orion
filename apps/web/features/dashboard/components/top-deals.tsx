@@ -1,6 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
+import { CompanyBrand } from "@/shared/components/company-brand";
 import { topDeals, type DealStage } from "../constants/crm-data";
 
 const STAGE_STYLES: Record<DealStage, string> = {
@@ -37,9 +38,11 @@ export function TopDeals() {
             >
             {/* basis-0 lets the name shrink below its content width before the
                 amount or stage badge are allowed to compress. */}
-            <p className="min-w-0 flex-1 basis-0 truncate text-[11px] text-foreground">
-              {deal.company}
-            </p>
+            <CompanyBrand
+              company={deal.company}
+              className="min-w-0 flex-1 basis-0 gap-2 text-[11px] text-foreground"
+              iconClassName="h-5 w-5 rounded"
+            />
             <span className="shrink-0 whitespace-nowrap text-[10px] font-medium text-foreground">
               {deal.amount}
             </span>

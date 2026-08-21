@@ -80,15 +80,15 @@ export const mockChunks: Record<string, DocChunk[]> = {
 
   [globex]: [
     chunk(globex, `${globex}-p1`, null, "parent", 0, 2, "Sheet: Risk Matrix",
-      "Risk matrix — Globex Corporation. Security: 3.8/5 (missing SOC 2 Type II report; ISO 27001 certificate valid to 2027-03). Financial: 2.1/5 (D&B rating stable, positive cash flow 8 consecutive quarters). Delivery: 3.2/5 (single-region hosting, no documented DR test in last 12 months). Overall: MEDIUM-HIGH."),
+      "Risk matrix — Google. Security: 3.8/5 (missing SOC 2 Type II report; ISO 27001 certificate valid to 2027-03). Financial: 2.1/5 (D&B rating stable, positive cash flow 8 consecutive quarters). Delivery: 3.2/5 (single-region hosting, no documented DR test in last 12 months). Overall: MEDIUM-HIGH."),
     chunk(globex, `${globex}-p1-c1`, `${globex}-p1`, "child", 1, 3, "Sheet: Remediation Plan",
       "Remediation items: (1) obtain SOC 2 Type II report or bridge letter by 2026-09-30; (2) contractual commitment to multi-region failover in next renewal; (3) evidence of annual DR test with RTO ≤ 4h. Re-score vendor after item (1) closes."),
   ],
 
   [initech]: [
     chunk(initech, `${initech}-p1`, null, "parent", 0, 1, "Thread > Re: 2027 Renewal",
-      "From: m.waddams@initech.com · To: alex@orion.dev · Subject: Re: 2027 Renewal. \"Following Thursday's call — we can commit to renewal at current pricing with any future uplift capped at 5% for the 2027 term, per the attached amendment. Legal has countersigned; we need your signature back by July 15 to keep the current rate card.\""),
+      "From: m.waddams@microsoft.com · To: alex@orion.dev · Subject: Re: 2027 Renewal. \"Following Thursday's call — we can commit to renewal at current pricing with any future uplift capped at 5% for the 2027 term, per the attached amendment. Legal has countersigned; we need your signature back by July 15 to keep the current rate card.\""),
     chunk(initech, `${initech}-p1-c1`, `${initech}-p1`, "child", 1, 2, "Attachment > Amendment No. 2",
-      "Amendment No. 2 to the Initech Master Subscription Agreement. Section 1: the Subscription Term is extended through December 31, 2027. Section 2: fees for the extended term equal current fees; any increase for periods after 2027 shall not exceed five percent (5%) per annum. All other terms remain unchanged."),
+      "Amendment No. 2 to the Microsoft Master Subscription Agreement. Section 1: the Subscription Term is extended through December 31, 2027. Section 2: fees for the extended term equal current fees; any increase for periods after 2027 shall not exceed five percent (5%) per annum. All other terms remain unchanged."),
   ],
 };
