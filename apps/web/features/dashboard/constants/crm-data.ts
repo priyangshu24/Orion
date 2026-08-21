@@ -95,7 +95,7 @@ export interface ActivityItem {
 }
 
 export const recentActivity: ActivityItem[] = [
-  { id: "a1", icon: UserPlus, title: "New lead: Acme Corp", time: "2m ago", tone: "teal" },
+  { id: "a1", icon: UserPlus, title: "New lead: Apple", time: "2m ago", tone: "teal" },
   { id: "a2", icon: DollarSign, title: "Deal closed: $5,400", time: "15m ago", tone: "green" },
   { id: "a3", icon: Briefcase, title: "New task assigned", time: "1h ago", tone: "gold" },
   { id: "a4", icon: Megaphone, title: "Campaign launched", time: "3h ago", tone: "pink" },
@@ -112,11 +112,11 @@ export interface Deal {
 }
 
 export const topDeals: Deal[] = [
-  { id: "d1", company: "Acme Corporation", amount: "$12,500", stage: "Negotiation" },
-  { id: "d2", company: "Globex Inc.", amount: "$8,750", stage: "Proposal" },
-  { id: "d3", company: "Initech", amount: "$6,200", stage: "Qualification" },
-  { id: "d4", company: "Umbrella Corp.", amount: "$5,400", stage: "Negotiation" },
-  { id: "d5", company: "Stark Industries", amount: "$4,900", stage: "Proposal" },
+  { id: "d1", company: "Apple", amount: "$12,500", stage: "Negotiation" },
+  { id: "d2", company: "Google", amount: "$8,750", stage: "Proposal" },
+  { id: "d3", company: "Microsoft", amount: "$6,200", stage: "Qualification" },
+  { id: "d4", company: "Pfizer", amount: "$5,400", stage: "Negotiation" },
+  { id: "d5", company: "Tesla", amount: "$4,900", stage: "Proposal" },
 ];
 
 export interface DashboardTask {
@@ -127,8 +127,8 @@ export interface DashboardTask {
 }
 
 export const dashboardTasks: DashboardTask[] = [
-  { id: "t1", title: "Follow up with Acme Corp", due: "Today", done: false },
-  { id: "t2", title: "Prepare proposal for Globex", due: "Tomorrow", done: false },
+  { id: "t1", title: "Follow up with Apple", due: "Today", done: false },
+  { id: "t2", title: "Prepare proposal for Google", due: "Tomorrow", done: false },
   { id: "t3", title: "Team meeting", due: "May 22", done: false },
   { id: "t4", title: "Review campaign results", due: "May 23", done: false },
   { id: "t5", title: "Quarterly report", due: "May 25", done: false },

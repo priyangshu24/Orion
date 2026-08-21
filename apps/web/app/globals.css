@@ -23,6 +23,11 @@
   --color-warning: #efb34f;
   --color-info: #2bb7dc;
   --color-border: rgba(70, 132, 126, 0.17);
+  /* Calendar rules. Deliberately stronger than --color-border: a grid has to
+     read as a grid, and panel-edge alpha disappears across a wide table.
+     Applied through .orion-grid-line, not a border-grid-line utility — see the
+     note on that class below. */
+  --color-grid-line: rgba(125, 205, 196, 0.26);
   --color-input: rgba(70, 132, 126, 0.18);
   --color-ring: #19d7c0;
   --color-sidebar: rgba(2, 10, 12, 0.94);
@@ -73,6 +78,7 @@
 
 /* Light theme overrides */
 [data-theme="light"] {
+  --color-grid-line: rgba(20, 60, 58, 0.16);
   --color-background: #fafafa;
   --color-foreground: #09090b;
   --color-card: rgba(255, 255, 255, 0.26);
@@ -181,6 +187,79 @@ select[aria-label="Contact status"] option:checked {
 
 .orion-panel button.absolute > span:last-child:has(> svg) {
   display: none;
+}
+
+/* Thirty-minute appointments use a dedicated two-line treatment. This avoids
+   clipped account text while keeping the title comfortably legible. */
+.orion-panel button.absolute[style*="height: 28px"] {
+  padding: 3px 7px !important;
+}
+
+.orion-panel button.absolute[style*="height: 28px"] > span:nth-child(3) {
+  display: none;
+}
+
+/* Calendar event editor: make the start-time picker easy to scan and operate. */
+[role="dialog"] label:nth-of-type(4) select {
+  min-height: 48px;
+  appearance: none;
+  padding: 0 44px 0 16px;
+  border-color: rgba(47, 193, 178, 0.2);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23d8f6f1' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 16px center;
+  box-shadow: inset 0 1px 0 rgba(235, 255, 252, 0.06), 0 10px 24px rgba(0, 0, 0, 0.12);
+  color: #f1fbfa;
+  font-size: 1rem;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+[role="dialog"] label:nth-of-type(4) select:focus {
+  border-color: rgba(28, 215, 190, 0.72);
+  box-shadow: 0 0 0 3px rgba(28, 215, 190, 0.12), inset 0 1px 0 rgba(235, 255, 252, 0.06);
+}
+
+[role="dialog"] #event-invitees:focus-visible {
+  outline: none;
+}
+
+/* Keep every remaining native CRM select in the Orion theme. `color-scheme`
+   asks the browser for its dark menu chrome; option colours cover browsers
+   that honour author styling inside the system popup. */
+.orion-space select {
+  color-scheme: dark;
+}
+
+.orion-space select option,
+.orion-space select optgroup {
+  background: #081718;
+  color: #edf9f7;
+}
+
+.orion-space select option:checked {
+  background: #0c6c65;
+  color: #ffffff;
+}
+
+/* Keep the complete event editor visible on shorter laptop displays without
+   introducing a second scrollbar inside the dialog. */
+@media (min-width: 640px) and (max-height: 900px) {
+  .orion-event-dialog {
+    transform: scale(0.88);
+    transform-origin: top center;
+  }
+}
+
+/* Calendar grid rules.
+   ----------------------------------------------------------------------------
+   This has to be a class, not Tailwinds border-grid-line utility. The `*` rule
+   at the top of this file is UNLAYERED, and unlayered declarations beat every
+   layered one regardless of specificity — so `* { border-color: ... }` silently
+   overrides all of Tailwinds border-color utilities. A class at (0,1,0) clears
+   the universal selector and lands. */
+.orion-grid-line {
+  border-color: var(--color-grid-line);
 }
 
 /* Glassmorphism utility */
@@ -657,7 +736,6 @@ body {
 .orion-add-widget {
   border: 1px solid rgba(25, 215, 192, 0.32);
   background: linear-gradient(110deg, rgba(11, 115, 105, 0.92), rgba(7, 83, 78, 0.88));
-  box-shadow: inset 0 1px 0 rgba(225, 255, 250, 0.12), 0 8px 24px rgba(0, 114, 103, 0.2);
   color: #f4f8ff;
 }
 
@@ -691,9 +769,11 @@ body {
     inset 2px 0 0 rgba(20, 160, 140, 0.75);
 }
 
-/* Calendar's current-time marker needs to stay legible over dark events and grid lines. */
+/* Calendar's current-time marker: a crisp 2px rule with a glow so it reads over
+   the grid lines. Deliberately NO z-index here — the component keeps it at z-0
+   so it passes behind event cards (z-10) instead of striking through their
+   titles. Raising it above the cards is what the marker must not do. */
 [aria-label^="Current time:"] {
-  z-index: 40 !important;
   height: 2px !important;
   border: 0 !important;
   background: #ff4d5a !important;
