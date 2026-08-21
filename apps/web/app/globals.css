@@ -739,6 +739,15 @@ body {
   color: #f4f8ff;
 }
 
+/* Reports uses a horizontal analysis rail; give its labels a clear, easy-to-scan scale. */
+nav.flex.overflow-x-auto.border-b.border-border > button {
+  padding: 0.8rem 1.15rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+
+
 [data-theme="light"] .orion-space { background-color: #f5f7fb; }
 [data-theme="light"] .orion-space::before,
 [data-theme="light"] .orion-space::after { display: none; }
